@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration  
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-config.dtd">  
+<configuration>  
+	<!-- MyBatis是一个支持自定义SQL，存储过程和高级映射的第一类持久化框架。MyBatis消除了几乎所有的JDBC代码和手动设置参数和检索结果。
+	MyBatis可以使用简单的XML或注解来配置和映射原语，Map接口和Java POJO（Plain Old Java Objects）到数据库记录。 -->
+	<!-- 全局配置参数，高级特性设置 -->
+	<settings>
+		<!-- 确定使用自己的日志框架,默认按照顺序搜索日志实现：SLF4J、Apache Commons Logging、Log4j2、Log4j、JDK Logging -->
+		<setting name="logImpl" value="LOG4J"/>
+		<!-- 打开延迟加载的开关 -->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<!-- 取消积极加载，同意懒加载也就是按需加载 -->
+		<setting name="aggressiveLazyLoading" value="false"/>
+	</settings>
+	
+	<!-- 别名定义 -->
+	<typeAliases>
+		<!-- 针对单个别名定义
+		type：类型的路径
+		alias：别名
+		 -->
+		<!-- <typeAlias type="com.cal.base.system.entity.po.User" alias="user"/> -->
+		<!-- 批量别名定义 
+		指定包名，mybatis自动扫描包中的po类，自动定义别名，别名就是类名（首字母大写或小写都可以）
+		-->
+		<package name="com.cal.base.system.entity.po" />
+	</typeAliases>
+	
+	<!-- 分页的拦截器 -->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<property name="dialect" value="mysql"/>
+		</plugin>
+    </plugins>  
+</configuration>  
