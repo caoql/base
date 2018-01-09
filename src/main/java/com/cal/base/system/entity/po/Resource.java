@@ -1,9 +1,15 @@
 package com.cal.base.system.entity.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Resource {
-    private String resourceId;
+public class Resource implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2630857491860546156L;
+
+	private String resourceId;
 
     private String name;
 

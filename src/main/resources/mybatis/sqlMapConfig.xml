@@ -5,6 +5,17 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 <configuration>  
 	<!-- MyBatis是一个支持自定义SQL，存储过程和高级映射的第一类持久化框架。MyBatis消除了几乎所有的JDBC代码和手动设置参数和检索结果。
 	MyBatis可以使用简单的XML或注解来配置和映射原语，Map接口和Java POJO（Plain Old Java Objects）到数据库记录。 -->
+	
+	<!-- 这些属性都是可外部配置且可动态替换的，既可以在典型的 Java 属性文件中配置，亦可通过 properties 元素的子元素来传递 -->
+	<!-- 如果属性在不只一个地方进行了配置，那么 MyBatis 将按照下面的顺序来加载：
+	在 properties 元素体内指定的属性首先被读取。
+	然后根据 properties 元素中的 resource 属性读取类路径下属性文件或根据 url 属性指定的路径读取属性文件，并覆盖已读取的同名属性。
+	最后读取作为方法参数传递的属性，并覆盖已读取的同名属性。
+	因此，通过方法参数传递的属性具有最高优先级，resource/url 属性中指定的配置文件次之，最低优先级的是 properties 属性中指定的属性。 -->
+	<!-- <properties resource="jdbc.properties" url="">
+		<property name="" value="" />
+	</properties> -->
+	
 	<!-- 全局配置参数，高级特性设置 -->
 	<settings>
 		<!-- 确定使用自己的日志框架,默认按照顺序搜索日志实现：SLF4J、Apache Commons Logging、Log4j2、Log4j、JDK Logging -->
@@ -16,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	</settings>
 	
 	<!-- 别名定义 -->
+	<!-- 类型别名只是Java类型的简称。它只与XML配置相关，并且简单地存在以减少完全限定的类名的多余类型 -->
 	<typeAliases>
 		<!-- 针对单个别名定义
 		type：类型的路径
@@ -28,10 +40,61 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<package name="com.cal.base.system.entity.po" />
 	</typeAliases>
 	
+	<!-- 类型处理器 -->
+	<!-- 无论是 MyBatis 在预处理语句（PreparedStatement）中设置一个参数时，还是从结果集中取出一个值时， 
+	都会用类型处理器将获取的值以合适的方式转换成 Java 类型。 -->
+	<!-- 你可以重写类型处理器或创建你自己的类型处理器来处理不支持的或非标准的类型。 具体做法为：实现 org.apache.ibatis.type.TypeHandler 接口，
+	 或继承一个很便利的类 org.apache.ibatis.type.BaseTypeHandler， 然后可以选择性地将它映射到一个 JDBC 类型.
+	具体参考：http://www.mybatis.org/mybatis-3/zh/configuration.html -->
+	<!-- <typeHandlers>
+	</typeHandlers> -->
+	
+	<!-- 和spring整合后 environments配置将废除-->
+	<!-- <environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments> -->
+	
 	<!-- 分页的拦截器 -->
 	<plugins>
 		<plugin interceptor="com.github.pagehelper.PageHelper">
 			<property name="dialect" value="mysql"/>
 		</plugin>
     </plugins>  
+    
+    <!-- 加载 映射文件 -->
+    <!-- 你可以使用相对于类路径的资源引用， 或完全限定资源定位符（包括 file:/// 的 URL），或类名和包名等。 -->
+    <!-- <mappers>
+    	<mapper class="" resource="" url=""/>
+    	<package name="" /> -->
+    	
+    	<!--通过resource方法一次加载一个映射文件 -->
+		<!-- Using classpath relative resources -->
+		<!-- <mapper resource="org/mybatis/builder/AuthorMapper.xml"/> -->
+		
+		<!-- Using url fully qualified paths -->
+		<!-- <mapper url="file:///var/mappers/AuthorMapper.xml"/> -->
+		
+		<!-- 通过mapper接口加载单个映射文件
+		遵循一些规范：需要将mapper接口类名和mapper.xml映射文件名称保持一致，且在一个目录中
+		上边规范的前提是：使用的是mapper代理方法(注意4点)
+		 -->
+		<!-- Using mapper interface classes -->
+		<!-- <mapper class="org.mybatis.builder.AuthorMapper"/> -->
+		
+		<!-- 批量加载mapper
+		指定mapper接口的包名，mybatis自动扫描包下边所有mapper接口进行加载
+		遵循一些规范：需要将mapper接口类名和mapper.xml映射文件名称保持一致，且在一个目录 中
+		上边规范的前提是：使用的是mapper代理方法(注意4点)
+		 -->
+		<!-- Register all interfaces in a package as mappers -->
+		<!-- <package name="org.mybatis.builder"/> -->
+    <!-- </mappers> -->
 </configuration>  

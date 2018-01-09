@@ -10,19 +10,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * ͨ数据库连接测试
- *	@author andyc
- *	@
+ *
+ * @author andyc @
  */
-@RunWith(SpringJUnit4ClassRunner.class) 
-@ContextConfiguration(locations = {"classpath:spring/applicationContext-dao.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:spring/applicationContext-dao.xml" })
 public class DbConnTest {
 
-      @Autowired  
-      private SqlSessionFactory sqlSessionFactory; 
-      
-      @Test 
-      public void testConn() {  
-          Connection conn = sqlSessionFactory.openSession().getConnection(); 
-          Assert.assertNotNull("链接为空!!!", conn);  
-       }  
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
+
+	@Test
+	public void testConn() {
+		Connection conn = sqlSessionFactory.openSession().getConnection();
+		Assert.assertNotNull("链接为空!!!", conn);
+	}
 }

@@ -2,8 +2,8 @@ package com.cal.base.common.cache;
 
 
 import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
@@ -11,6 +11,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import com.cal.base.common.util.ByteToObjectUtils;
+import com.cal.base.common.util.SerializeUtil;
 
 /**
  * @author 
@@ -18,6 +19,10 @@ import com.cal.base.common.util.ByteToObjectUtils;
  */
 public class RedisClient {
 	private static JedisPool jedisPool = null;
+	// 字符编码
+	private static final String CAHRSET = "utf-8";
+	// 数据库索引
+	private static final int DEFAULT_DB_INDEX = 1;
 	
 	private static Logger logger = Logger.getLogger(RedisClient.class);
 	
@@ -58,6 +63,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.exists(key);
 		} catch (Exception e) {
 			logger.error("#exists key = " + key, e);
@@ -78,9 +84,25 @@ public class RedisClient {
 		long num = 0;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			num = jedis.del(keys);
 		} catch (Exception e) {
 			logger.error("#del key = " + ArrayUtils.toString(keys), e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return num;
+	}
+	
+	public static long del(byte[] key) {
+		Jedis jedis = null;
+		long num = 0;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			num = jedis.del(key);
+		} catch (Exception e) {
+			logger.error("#del key = " + ArrayUtils.toString(key), e);
 		} finally {
 			closeJedis(jedis);
 		}
@@ -101,6 +123,7 @@ public class RedisClient {
 		try {
 			if (timeout > 0) {
 				jedis = jedisPool.getResource();
+				jedis.select(DEFAULT_DB_INDEX);
 				num = jedis.expire(key, timeout);
 			}
 		} catch (Exception e) {
@@ -126,10 +149,24 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			jedis.set(key, value);
 			if (timeout > 0) {
 				jedis.expire(key, timeout);
 			}
+		} catch (Exception e) {
+			logger.error("#set key = " + key, e);
+		} finally {
+			closeJedis(jedis);
+		}
+	}
+	
+	public static void set(String key, Object value) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			jedis.set(key.getBytes(CAHRSET), SerializeUtil.serialize(value));
 		} catch (Exception e) {
 			logger.error("#set key = " + key, e);
 		} finally {
@@ -147,6 +184,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			jedis.set(key, value);
 		} catch (Exception e) {
 			logger.error("#set key = " + key, e);
@@ -164,6 +202,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.get(key);
 		} catch (Exception e) {
 			logger.error("#get key = " + key, e);
@@ -172,6 +211,26 @@ public class RedisClient {
 			closeJedis(jedis);
 		}
 	}
+	
+	public static Object getObj(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			byte[] obj = jedis.get(key.getBytes(CAHRSET));
+			if (obj != null) {
+				return SerializeUtil.unserialize(obj);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			logger.error("#get key = " + key, e);
+			return null;
+		} finally {
+			closeJedis(jedis);
+		}
+	}
+	
 	
 	/**
 	 * Redis hash 是一个string类型的field和value的映射表，hash特别适合用于存储对象。
@@ -190,7 +249,8 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.hset(key.getBytes(), ByteToObjectUtils.ObjectToByte(field), ByteToObjectUtils.ObjectToByte(value));
+			jedis.select(DEFAULT_DB_INDEX);
+			jedis.hset(key.getBytes(CAHRSET), ByteToObjectUtils.ObjectToByte(field), ByteToObjectUtils.ObjectToByte(value));
 		} catch (Exception e) {
 			logger.error("#hset key = " + key + ", field = " + field+ ", value = " + value, e);
 		} finally {
@@ -208,7 +268,8 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			byte[] obj = jedis.hget(key.getBytes(), ByteToObjectUtils.ObjectToByte(field));
+			jedis.select(DEFAULT_DB_INDEX);
+			byte[] obj = jedis.hget(key.getBytes(CAHRSET), ByteToObjectUtils.ObjectToByte(field));
 			if (obj != null) {
 				return ByteToObjectUtils.ByteToObject(obj);
 			} else {
@@ -232,7 +293,8 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.hdel(key.getBytes(), ByteToObjectUtils.ObjectToByte(field));
+			jedis.select(DEFAULT_DB_INDEX);
+			jedis.hdel(key.getBytes(CAHRSET), ByteToObjectUtils.ObjectToByte(field));
 		} catch (Exception e) {
 			logger.error("#hdel key = " + key + ", fields = " + field, e);
 		} finally {
@@ -253,6 +315,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			if (values != null) {
 				jedis.rpush(key, values);	
 			}
@@ -272,6 +335,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			if (value != null) {
 				jedis.rpush(key, value);	
 			}
@@ -293,6 +357,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.blpop(timeout, key);
 		} catch (Exception e) {
 			logger.error("# blpop key = " + key, e);
@@ -313,6 +378,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.brpop(timeout, key);
 		} catch (Exception e) {
 			logger.error("# brpop key = " + key, e);
@@ -330,6 +396,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.lpop(key);
 		} catch (Exception e) {
 			logger.error("# lpop key = " + key, e);
@@ -347,6 +414,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.rpop(key);
 		} catch (Exception e) {
 			logger.error("# rpop key = " + key, e);
@@ -364,6 +432,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.llen(key);
 		} catch (Exception e) {
 			logger.error("#llen key = " + key, e);
@@ -381,6 +450,7 @@ public class RedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
 			return jedis.lrange(key, start, end);
 		} catch (Exception e) {
 			logger.error("#lrange key = " + key, e);
@@ -397,7 +467,8 @@ public class RedisClient {
 		try {
 			logger.debug("#set key="+key+",value="+value);
 			jedis = jedisPool.getResource();
-			jedis.setex(key.getBytes(), seconds, ByteToObjectUtils.ObjectToByte(value));
+			jedis.select(DEFAULT_DB_INDEX);
+			jedis.setex(key.getBytes(CAHRSET), seconds, ByteToObjectUtils.ObjectToByte(value));
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
@@ -405,18 +476,15 @@ public class RedisClient {
 		}
 	}
 	
-	
-	
-	
-	
 	public static void setnx(String key, Object value, Integer timeout) {
 		Jedis jedis = null;
 		try {
 			logger.debug("#set key="+key+",value="+value);
 			jedis = jedisPool.getResource();
-			jedis.setnx(key.getBytes(), ByteToObjectUtils.ObjectToByte(value));
+			jedis.select(DEFAULT_DB_INDEX);
+			jedis.setnx(key.getBytes(CAHRSET), ByteToObjectUtils.ObjectToByte(value));
 			if (timeout != null && timeout > 0) {
-				jedis.expire(key.getBytes(), timeout);
+				jedis.expire(key.getBytes(CAHRSET), timeout);
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -424,11 +492,6 @@ public class RedisClient {
 			closeJedis(jedis);
 		}
 	}
-	
-	
-
-	
-
 	
 	/**
 	 * 自增/减 
@@ -442,9 +505,24 @@ public class RedisClient {
 		}
 		try {
 			jedis = jedisPool.getResource();
-			return jedis.incrBy(key.getBytes(), num);
+			jedis.select(DEFAULT_DB_INDEX);
+			return jedis.incrBy(key.getBytes(CAHRSET), num);
 		} catch (Exception e) {
 			logger.error("key="+key+",num="+num,e);
+			return null;
+		} finally {
+			closeJedis(jedis);
+		}
+	}
+	
+	public static Set<byte[]> keys(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			return jedis.keys(key.getBytes(CAHRSET));
+		} catch (Exception e) {
+			logger.error("jedis = " + key, e);
 			return null;
 		} finally {
 			closeJedis(jedis);

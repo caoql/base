@@ -1,7 +1,14 @@
 package com.cal.base.system.entity.po;
 
-public class RoleResource {
-    private String id;
+import java.io.Serializable;
+
+public class RoleResource implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5460770784638762792L;
+
+	private String id;
 
     private String roleId;
 

@@ -1,7 +1,14 @@
 package com.cal.base.system.entity.po;
 
-public class UserRole {
-    private String id;
+import java.io.Serializable;
+
+public class UserRole implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6354569699818363968L;
+
+	private String id;
 
     private String userId;
 

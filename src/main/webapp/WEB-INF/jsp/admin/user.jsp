@@ -29,11 +29,11 @@
 	</table>
 	<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"></a>
-			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
+			<a href="#" class="easyui-linkbutton" onclick="addUser();" iconCls="icon-add" plain="true"></a>
+			<!-- <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
 			<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true"></a>
 			<a href="#" class="easyui-linkbutton" iconCls="icon-cut" plain="true"></a>
-			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a> -->
 		</div>
 		<div>
 			Date From: <input class="easyui-datebox" style="width:80px">
@@ -50,6 +50,8 @@
 			<a href="#" id="btn-search" class="easyui-linkbutton" iconCls="icon-search">Search</a>
 		</div>
 	</div>
+	<div id="add"></div>
+	<div id="edit"></div>
 <script src="../../ui/js/jquery-easyui/jquery.min.js"></script>
 <script src="../../ui/js/jquery-easyui/jquery.easyui.min.js"></script>
 <script src="../../ui/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
@@ -65,6 +67,21 @@
 			});
 		});
 	});
+	
+	function addUser() {
+		$('#add').dialog({
+            title : '添加',
+            width : 500,
+            height : 350,
+            href : '/base/admin/user/addpage',
+            buttons : [ {
+                text : '添加',
+                handler : function() {
+                   $.messagert.alert('提示消息', 'hehe', 'info');
+                }
+            } ]
+        });
+	}
 </script>
 </body>
 </html>

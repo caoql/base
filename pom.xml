@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cal</groupId>
-    <artifactId>base</artifactId>
-    <packaging>war</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>base Maven Webapp</name>
-    <url>http://maven.apache.org</url>
-    
-    <!-- 相关属性设置 -->
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cal</groupId>
+	<artifactId>base</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>base Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<!-- 相关属性设置 -->
 	<properties>
 		<!-- SPRING版本号 -->
 		<spring.version>4.3.9.RELEASE</spring.version>
@@ -18,7 +18,7 @@
 		<mybatis.version>3.4.1</mybatis.version>
 		<!-- LOG4J日志文件管理包版本号 -->
 		<log4j.version>1.2.17</log4j.version>
-	    <shiro.version>1.4.0</shiro.version>
+		<shiro.version>1.4.0</shiro.version>
 	</properties>
 
 	<!-- 相关依赖设置 -->
@@ -30,20 +30,20 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- JSTL -->
-		<dependency>    
-		   <groupId>javax.servlet</groupId>    
-		   <artifactId>jstl</artifactId>    
-		   <version>1.2</version>    
-		   <scope>runtime</scope>    
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-		    <groupId>taglibs</groupId>
-		    <artifactId>standard</artifactId>
-		    <version>1.1.2</version>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
 		</dependency>
-		
+
 		<!-- log start -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -51,14 +51,14 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<!-- log end -->
-		
-		<!-- redis start-->
+
+		<!-- redis start -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>2.9.0</version>
 		</dependency>
-		<!-- redis end-->
+		<!-- redis end -->
 
 		<!-- commons lang begin -->
 		<dependency>
@@ -81,16 +81,16 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Hibernate Validator-->
+		<!-- Hibernate Validator -->
 		<dependency>
-		    <groupId>org.hibernate.validator</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>6.0.5.Final</version>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.0.5.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
-    		<artifactId>validation-api</artifactId>
-   			<version>2.0.0.Final</version>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.0.Final</version>
 		</dependency>
 
 		<!-- ASPECTJ框架包 -->
@@ -104,35 +104,6 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.8.11</version>
 		</dependency>
-		
-	     <!-- Spring 整合Shiro需要的依赖 -->
-	     <dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
-			<version>${shiro.version}</version>
-	     </dependency>
-	     <dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-web</artifactId>
-			<version>${shiro.version}</version>
-	     </dependency>
-	     <dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-ehcache</artifactId>
-			<version>${shiro.version}</version>
-	     </dependency>
-	     <dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-quartz</artifactId>
-			<version>${shiro.version}</version>
-	     </dependency>
-	     <dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro.version}</version>
-	     </dependency>
-	     <!-- endSpring 整合Shiro需要的依赖 -->
-
 
 		<!-- SPRING 相关设置 -->
 		<!--1. SPRING 核心依赖 -->
@@ -199,32 +170,7 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- Spring Security Start -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring.security}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${spring.security}</version>
-		</dependency>
-		<!-- Spring Security End -->
 
-		
-		
-		
 		<!--MYBATIS 依赖坐标 -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -243,6 +189,19 @@
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper</artifactId>
 			<version>4.1.0</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mybatis.caches</groupId>
+			<artifactId>mybatis-ehcache</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 
 		<!--引入MYSQL驱动 -->
@@ -295,7 +254,7 @@
 			<artifactId>httpcore</artifactId>
 			<version>4.4.6</version>
 		</dependency>
-		
+
 		<!-- UserAgentUtils -->
 		<dependency>
 			<groupId>eu.bitwalker</groupId>
@@ -303,7 +262,8 @@
 			<version>1.20</version>
 		</dependency>
 	</dependencies>
-    <build>
-    	<finalName>base</finalName>
-    </build>
+
+	<build>
+		<finalName>base</finalName>
+	</build>
 </project>

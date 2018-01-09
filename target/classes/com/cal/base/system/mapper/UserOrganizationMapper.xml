@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cal.base.system.dao.UserOrganizationMapper" >
+<mapper namespace="com.cal.base.system.mapper.UserOrganizationMapper" >
   <resultMap id="BaseResultMap" type="com.cal.base.system.entity.po.UserOrganization" >
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="USER_ID" property="userId" jdbcType="VARCHAR" />

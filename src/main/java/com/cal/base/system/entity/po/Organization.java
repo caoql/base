@@ -1,9 +1,15 @@
 package com.cal.base.system.entity.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Organization {
-    private String organizationId;
+public class Organization implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 754421066320648032L;
+
+	private String organizationId;
 
     private String code;
 

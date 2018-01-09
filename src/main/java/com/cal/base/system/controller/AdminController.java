@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import redis.clients.jedis.Jedis;
 
 import com.cal.base.common.cache.RedisClient;
-import com.cal.base.system.dao.IUserDao;
+import com.cal.base.system.mapper.UserMapper;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,11 +31,11 @@ public class AdminController {
 	}
 	
 	@Autowired
-	private IUserDao userDao;
+	private UserMapper userMapper;
 	
 	@GetMapping(value = "/welcome")
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {  
-		userDao.selectByPrimaryKey("12");
+		userMapper.selectByPrimaryKey(12L);
 		//1、收集参数、验证参数  
        //2、绑定参数到命令对象  
        //3、将命令对象传入业务对象进行业务处理  

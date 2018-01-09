@@ -1,9 +1,15 @@
 package com.cal.base.system.entity.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Role {
-    private String roleId;
+import com.cal.base.common.reflect.ObjReflect;
+
+public class Role implements Serializable {
+	
+	private static final long serialVersionUID = -1277471508924130549L;
+
+	private String roleId;
 
     private String name;
 
@@ -25,7 +31,13 @@ public class Role {
 
     private String updator;
 
-    public String getRoleId() {
+    
+    @Override
+	public String toString() {
+		return ObjReflect.toString(this);
+	}
+
+	public String getRoleId() {
         return roleId;
     }
 

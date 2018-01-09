@@ -1,6 +1,7 @@
 package com.cal.base.system.entity.query;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.cal.base.common.info.RequestInfo;
 import com.cal.base.common.reflect.ObjReflect;
@@ -18,6 +19,8 @@ public class UserParam extends RequestInfo implements Serializable {
 	private String sex;
 	
 	private String isEnabled;
+	
+	private List<Long> ids;
 	
 	@Override
 	public String toString() {
@@ -62,5 +65,13 @@ public class UserParam extends RequestInfo implements Serializable {
 
 	public void setIsEnabled(String isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+
+	public List<Long> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<Long> ids) {
+		this.ids = ids;
 	}
 }

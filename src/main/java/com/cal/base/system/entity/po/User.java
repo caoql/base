@@ -1,5 +1,6 @@
 package com.cal.base.system.entity.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.cal.base.common.reflect.ObjReflect;
@@ -9,9 +10,11 @@ import com.cal.base.common.reflect.ObjReflect;
  * @author andyc
  *
  */
-public class User {
+public class User implements Serializable {
 	
-    private Long userId;
+	private static final long serialVersionUID = 8295764171760792828L;
+
+	private Long userId;
 
     private String account;
 

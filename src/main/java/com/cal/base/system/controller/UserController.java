@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cal.base.common.info.ResponseInfo;
 import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.system.entity.po.User;
 import com.cal.base.system.entity.query.UserParam;
 import com.cal.base.system.service.IUserService;
 
@@ -41,8 +43,20 @@ public class UserController {
 	@PostMapping("/list")
 	@ResponseBody
 	public ResponsePageInfo list(UserParam param) {
-		System.out.println(param);
 		return userService.listAll(param);
+	}
+	
+	@GetMapping("/addpage")
+	public ModelAndView showAddPage() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("admin/adduser");
+		return mv;
+	}
+	
+	@PostMapping("/adduser")
+	@ResponseBody
+	public ResponseInfo insertUser(User addVo) {
+		return userService.insertUser(addVo);
 	}
 
 }

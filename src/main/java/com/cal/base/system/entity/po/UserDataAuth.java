@@ -1,9 +1,15 @@
 package com.cal.base.system.entity.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserDataAuth {
-    private String id;
+public class UserDataAuth implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7738722754489137913L;
+
+	private String id;
 
     private String userId;
 
