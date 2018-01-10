@@ -4,10 +4,11 @@
 # 3.忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件，数据库配置文件等。
 # 4.不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。所有配置文件可以直接在线浏览：https://github.com/github/gitignore
 # 5..gitignore文件本身要放到版本库里，并且可以对.gitignore做版本管理！
-# 6.最后要注意的是要忽略的东西必须没有受到过版本控制，否则也会失效
+# 6.最后要注意的是要忽略的东西必须没有受到过版本控制，否则也会失效，如果已经控制了，就要用如下命令来清楚缓存
 # git rm -r --cached .
 # git add .
 # git commit -m 'update .gitignore'
+# 7.可以用git check-ignore命令检查：git check-ignore -v 某文件 来看对应规则
 
 # a.忽略文件夹
 target/
