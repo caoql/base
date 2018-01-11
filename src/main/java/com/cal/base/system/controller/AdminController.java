@@ -74,4 +74,12 @@ public class AdminController {
         return new ModelAndView("test");  
     }  
 
+	// 登录系统做到session共享或者是token共享
+	
+	
+	
+	
+	// 发送短信验证码限速，网站限制IP地址一秒之内不能访问超过N次等
+	
+	
 }

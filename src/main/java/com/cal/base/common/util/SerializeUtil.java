@@ -17,7 +17,7 @@ public class SerializeUtil {
         ByteArrayOutputStream bo = null;
         ObjectOutputStream oo = null;
         try {
-        	if(obj==null){
+        	if (obj == null) {
         		return null;
         	}
             // object to bytearray

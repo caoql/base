@@ -55,7 +55,7 @@ public class RedisCache implements Cache {
 
 	@Override
 	public Object getObject(Object key) {
-		return RedisClient.getObj(getKey(key));
+		return RedisClient.get(getKey(key));
 	}
 
 	@Override

@@ -10,4 +10,6 @@ public interface IUserService {
 	ResponsePageInfo listAll(UserParam param);
 
 	ResponseInfo insertUser(User addVo);
+
+	ResponseInfo queryUser(Long userId);
 }

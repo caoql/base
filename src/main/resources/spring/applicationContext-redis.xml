@@ -13,11 +13,14 @@
         <property name="minIdle" value="${redis.minIdle}" />
         <property name="maxIdle" value="${redis.maxIdle}" />
         <property name="maxTotal" value="${redis.maxTotal}" />
+        <property name="maxWaitMillis" value="${redis.maxWaitMillis}" />
+        <property name="testOnCreate" value="${redis.testOnCreate}" />
         <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+        <property name="testOnReturn" value="${redis.testOnReturn}" />
         <property name="numTestsPerEvictionRun" value="${redis.numTestsPerEvictionRun}" />
     </bean>
     
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" scope="singleton">
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
         <constructor-arg index="0" name="poolConfig" ref="jedisPoolConfig" />
         <constructor-arg index="1" name="host" value="${redis.host}" />
         <constructor-arg index="2" name="port" value="${redis.port}" />

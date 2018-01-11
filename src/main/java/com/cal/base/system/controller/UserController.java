@@ -58,5 +58,11 @@ public class UserController {
 	public ResponseInfo insertUser(User addVo) {
 		return userService.insertUser(addVo);
 	}
+	
+	@GetMapping("/query")
+	@ResponseBody
+	public ResponseInfo queryUser(Long userId) {
+		return userService.queryUser(userId);
+	}
 
 }
