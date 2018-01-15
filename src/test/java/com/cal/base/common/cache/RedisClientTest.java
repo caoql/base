@@ -16,8 +16,9 @@ public class RedisClientTest {
 	@Autowired
 	private RedisClient redisClient;
 	
+	// 3.测试列表
 	@Test
-	public void test() {
+	public void testList() {
 		Assert.assertNotNull("redis客户端为空", redisClient);
 		
 		// 测试string
@@ -30,8 +31,11 @@ public class RedisClientTest {
 		RedisClient.hdel("user:info:12", "name");
 		System.out.println(RedisClient.hlen("user:info:12"));
 		RedisClient.hset("user:info:12", "age", 26);*/
-		
-		// 4.测试集合set
+	}
+	
+	// 4.测试集合Set
+	@Test
+	public void testSet() {
 		// 4.1.1测试添加元素的两种方法
 		RedisClient.del("myset");
 		long actual = RedisClient.sadd("myset", "1", "2", "3");
@@ -139,6 +143,40 @@ public class RedisClientTest {
 		RedisClient.sadd("hobby4".getBytes(), "js".getBytes(), "mysql".getBytes(), "linux".getBytes(), "ball".getBytes(), "git".getBytes());
 		Set<byte[]> diff2 = RedisClient.sdiff("hobby3".getBytes(), "hobby4".getBytes());
 		Assert.assertEquals(2, diff2.size());
+	}
+	
+	// 5.测试有序集合
+	@Test
+	public void testZsort() {
+		// 5.1测试添加元素
+		RedisClient.del("zkey");
+		long actual = RedisClient.zadd("zkey", 100, "caoql");
+		Assert.assertEquals(1, actual);
+		
+		// 5.2测试成员个数
+		long t = RedisClient.zcard("zkey");
+		Assert.assertEquals(1, t);
+		
+		// 5.3测试某个成员的分数
+		double s = RedisClient.zscore("zkey", "caoql");
+		System.out.println(s);
+		
+		// 5.4测试删除成员
+		long r = RedisClient.zrem("zkey", "caoql");
+		Assert.assertEquals(1, r);
+		
+		// 5.5测试计算成员的排名
+		RedisClient.del("star");
+		RedisClient.zadd("star", 95, "curry");
+		RedisClient.zadd("star", 97, "kd");
+		RedisClient.zadd("star", 100, "jorden");
+		RedisClient.zadd("star", 99, "lbj");
+		RedisClient.zadd("star", 98, "kobe");
+		Assert.assertEquals(0, RedisClient.zrank("star", "curry"));
+		Assert.assertEquals(4, RedisClient.zrevrank("star", "curry"));
+		
+		// 5.6测试增加成员的分数
+		System.out.println(RedisClient.zincrby("star", 2, "curry"));
 	}
 }
 

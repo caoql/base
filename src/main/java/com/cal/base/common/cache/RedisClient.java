@@ -1178,4 +1178,197 @@ public class RedisClient {
 		}
 		return result;
 	}
+	
+	/**
+	 * Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
+	 * 不同的是每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。
+	 * 有序集合的成员是唯一的,但分数(score)却可以重复。
+	 */
+	// 1.集合内
+	/**
+	 * 添加元素
+	 * @param key
+	 * @param score
+	 * @param member
+	 * @return
+	 */
+	public static Long zadd(String key, double score, String member) {
+		Jedis jedis = null;
+		Long result = 0L;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (member == null) {
+				throw new RuntimeException("member不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zadd(key, score, member);
+		} catch (Exception e) {
+			logger.error("#zadd key = " + key + ", score = " + score + ", member = " + member, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 计算成员个数
+	 * @param key
+	 * @return
+	 */
+	public static Long zcard(String key) {
+		Jedis jedis = null;
+		Long result = 0L;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zcard(key);
+		} catch (Exception e) {
+			logger.error("#zcard key = " + key, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 计算某个成员的分数
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	public static double zscore(String key,  String member) {
+		Jedis jedis = null;
+		double result = 0;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (member == null) {
+				throw new RuntimeException("member不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zscore(key, member);
+		} catch (Exception e) {
+			logger.error("#zscore key = " + key + ", member = " + member, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 删除成员
+	 * @param key
+	 * @param members
+	 * @return
+	 */
+	public static long zrem(String key,  String... members) {
+		Jedis jedis = null;
+		long result = 0;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (members == null) {
+				throw new RuntimeException("members不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zrem(key, members);
+		} catch (Exception e) {
+			logger.error("#zrem key = " + key + ", members = " + members, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 成员的排名-从低到高,序列从0开始
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	public static long zrank(String key,  String member) {
+		Jedis jedis = null;
+		long result = 0;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (member == null) {
+				throw new RuntimeException("member不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zrank(key, member);
+		} catch (Exception e) {
+			logger.error("#zrank key = " + key + ", member = " + member, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 成员的排名-从高到低，序列从0开始
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	public static long zrevrank(String key,  String member) {
+		Jedis jedis = null;
+		long result = 0;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (member == null) {
+				throw new RuntimeException("member不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zrevrank(key, member);
+		} catch (Exception e) {
+			logger.error("#zrevrank key = " + key + ", member = " + member, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 增加成员的分数
+	 * @param key
+	 * @param score 增加的分数
+	 * @param member
+	 * @return 增加分数后某成员的分数
+	 */
+	public static double zincrby(String key, double score, String member) {
+		Jedis jedis = null;
+		double result = 0;
+		try {
+			if (key == null) {
+				throw new RuntimeException("key不能是空对象");
+			}
+			if (member == null) {
+				throw new RuntimeException("member不能是空对象");
+			}
+			jedis = jedisPool.getResource();
+			jedis.select(DEFAULT_DB_INDEX);
+			result = jedis.zincrby(key, score, member);
+		} catch (Exception e) {
+			logger.error("#zincrby key = " + key + ", score = " + score + ", member = " + member, e);
+		} finally {
+			closeJedis(jedis);
+		}
+		return result;
+	}
 }
