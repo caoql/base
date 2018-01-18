@@ -7,6 +7,7 @@
 	<title>登录页</title>
 	<link rel="stylesheet" type="text/css" href="ui/js/jquery-easyui/themes/bootstrap/easyui.css" />
 	<link rel="stylesheet" type="text/css" href="ui/js/jquery-easyui/themes/icon.css" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 </head>
 <body class="easyui-layout">
 	<a href="/base/admin/home">首页</a>
