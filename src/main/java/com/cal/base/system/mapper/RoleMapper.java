@@ -3,18 +3,27 @@ package com.cal.base.system.mapper;
 import java.util.List;
 import java.util.Map;
 
-import com.cal.base.system.entity.po.Role;
+import com.cal.base.system.entity.po.RolePO;
 
+/**
+ * 角色Mapper,主要操作system_role表
+ * @author andyc
+ *
+ */
 public interface RoleMapper {
+	
     int deleteByPrimaryKey(String roleId);
 
-    int insertSelective(Role record);
+    int insertSelective(RolePO record);
     
-    int batchInsert(List<Role> records);
+    int batchInsert(List<RolePO> records);
 
-    Role selectByPrimaryKey(String roleId);
+    RolePO selectByPrimaryKey(String roleId);
 
-    int updateByPrimaryKeySelective(Role record);
+    int updateByPrimaryKeySelective(RolePO record);
     
-    List<Role> queryPos(Map<String, Object> paramMap);
+    List<RolePO> queryPos(Map<String, Object> paramMap);
+
+    // 根据角色ID获取资源列表
+	List<Map<Object, String>> selectResourceListByRoleId(String roleId);
 }

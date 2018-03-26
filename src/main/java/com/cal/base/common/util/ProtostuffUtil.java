@@ -1,16 +1,16 @@
 package com.cal.base.common.util;
 
-import com.cal.base.system.entity.po.User;
+import com.cal.base.system.entity.po.UserPO;
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 
 public class ProtostuffUtil {
-	private Schema<User> schema = RuntimeSchema.createFrom(User.class);
+	private Schema<UserPO> schema = RuntimeSchema.createFrom(UserPO.class);
 	 
 	// 序列化
-	public byte[] serialize(final User user) {
+	public byte[] serialize(final UserPO user) {
 		final LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
 		try {
 			return serializeInternal(user, schema, buffer);
@@ -23,9 +23,9 @@ public class ProtostuffUtil {
 	}
 	
 	// 反序列化
-	public User deserialize(final byte[] bytes) {
+	public UserPO deserialize(final byte[] bytes) {
 		try {
-			User user = deserializeInternal(bytes, schema.newMessage(), schema);
+			UserPO user = deserializeInternal(bytes, schema.newMessage(), schema);
 			if (user != null) {
 				return user;
 			}

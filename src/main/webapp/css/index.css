@@ -1,0 +1,56 @@
+/* 去掉浏览器默认样式的影响 */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+/* 头部统一设置高度和背景颜色 */
+.header, .logo, .title, .welcome {
+	height: 55px;
+	background-color: #F9F8F7;
+}
+
+.logo {
+	width:15%;
+	background:url(../img/logo.png) no-repeat center center;
+	background-size: 100%;
+	float: left;
+}
+
+.title {
+	width: 70%;
+	font-size: 18px;
+	font-weight: bold;
+	color:#000;
+	text-align: center;
+	line-height: 55px;
+ 	float: left;
+}
+
+.welcome {
+	width:15%;
+	font-size: 16px;
+	font-family:微软雅黑;
+	color:#000;
+	text-align: center;
+	line-height: 55px;
+	float:right;
+}
+
+
+#menubar {
+	width:15%;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+
+
+/* 底部信息设置 */
+.footer {
+	height: 60px;
+}
+.desc {
+	padding-top: 5px;
+	text-align: center;
+	font-size: 14px;
+}

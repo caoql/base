@@ -15,7 +15,7 @@
 	
 	<!-- 定义resultMap 将表的字段和pojo类中的属性作一个映射关系 type：resultMap最终映射的java对象类型,可以使用别名 
 		id：对resultMap的唯一标识 -->
-	<resultMap id="BaseResultMap" type="User">
+	<resultMap id="BaseResultMap" type="com.cal.base.system.entity.po.UserPO">
 		<!-- id表示查询结果集中唯一标识 column：查询出来的列名 property：type指定的pojo类型中的属性名 最终resultMap对column和property作一个映射关系 
 			（对应关系） -->
 		<id column="USER_ID" property="userId" />
@@ -41,7 +41,7 @@
 		<!-- 配置映射的关联 -->
 		<!-- association：用于映射关联查询单个对象的信息 property：要将关联查询用户组织信息映射到UserDTO中哪个属性 javaType：映射到UserDTO的哪个属性类型 -->
 		<association property="userOrganization"
-			javaType="com.cal.base.system.entity.po.UserOrganization">
+			javaType="com.cal.base.system.entity.po.UserOrganizationPO">
 			<result column="ORGANIZATION_ID" property="organizationId" />
 		</association>
 		<!-- 角色信息-要去重(看映射回来的数据不想等)，关键是通过主键识别(id)，配置了能够保证去重
@@ -50,7 +50,7 @@
 		property：将关联查询到多条记录映射到com.cal.base.system.entity.dto.UserDTO哪个属性
 		ofType：指定映射到list集合属性中pojo的类型
 		 -->
-		 <collection property="role" ofType="com.cal.base.system.entity.po.Role">
+		 <collection property="role" ofType="com.cal.base.system.entity.po.RolePO">
 		 <!-- id：角色唯 一标识
 		 	property:要将角色唯 一标识映射到com.cal.base.system.entity.po.Role的哪个属性
 		 	  -->
@@ -83,6 +83,11 @@
 		LEFT JOIN SYSTEM_USER_ORGANIZATION UO ON MAIN.USER_ID = UO.USER_ID
 		LEFT JOIN SYSTEM_USER_ROLE UR ON MAIN.USER_ID = UR.USER_ID
 		LEFT JOIN SYSTEM_ROLE ROLE ON UR.ROLE_ID = ROLE.ROLE_ID
+		<where>
+			<if test="account != null and account != ''">
+			AND MAIN.ACCOUNT = #{account}
+			</if>
+		</where>
 	</select>
 
 	<!-- 定义sql片段 id：sql片段的唯 一标识 经验：是基于单表来定义sql片段，这样话这个sql片段可重用性才高 在sql片段中不要包括 
@@ -102,6 +107,14 @@
 		<include refid="Base_Column_List" />
 		from system_user
 		where USER_ID = #{userId}
+	</select>
+
+	<!-- 通过用户名查询用户 -->
+	<select id="selectByLoginName" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from system_user
+		where account = #{value}
 	</select>
 
 	<!-- 查询条件sql片段 -->
@@ -170,7 +183,7 @@
 	</insert>
 
 	<!-- 添加用户 parameterType：指定输入 参数类型是pojo（包括用户信息） #{}中指定pojo的属性名，接收到pojo对象的属性值，mybatis通过OGNL获取对象的属性值 -->
-	<insert id="insertSelective" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="userId">
 		insert into system_user
 		<!-- 将插入数据的主键返回，返回到user对象中 SELECT LAST_INSERT_ID()：得到刚insert进去记录的主键值，只适用与自增主键 
 			keyProperty：将查询到主键值设置到parameterType指定的对象的哪个属性 order：SELECT LAST_INSERT_ID()执行顺序，相对于insert语句来说它的执行顺序 
@@ -298,4 +311,20 @@
 		</set>
 		where USER_ID = #{userId}
 	</update>
+	
+	<!-- 通过用户信息获取资源列表 -->
+	<select id="getResources" resultType="java.util.Map">
+		SELECT DISTINCT
+			SR.RESOURCE_ID as id,
+			SR.name,
+			SR.url,
+			SR.type,
+			SR.pid
+		FROM
+			SYSTEM_RESOURCE SR 
+		LEFT JOIN SYSTEM_ROLE_RESOURCE SRR ON SR.RESOURCE_ID = SRR.RESOURCE_ID
+		LEFT JOIN SYSTEM_USER_ROLE SUR ON SRR.ROLE_ID = SUR.ROLE_ID
+		WHERE SUR.USER_ID = #{userId}
+		ORDER BY SR.NODE_ORDER
+	</select>
 </mapper>

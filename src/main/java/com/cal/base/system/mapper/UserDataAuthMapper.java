@@ -1,9 +1,13 @@
 package com.cal.base.system.mapper;
 
-import com.cal.base.system.entity.po.UserDataAuth;
+import com.cal.base.system.entity.po.UserDataAuthPO;
 
+/**
+ * 用户数据权限Mapper,操作的主要是system_user_data_auth表
+ * 
+ * @author andyc 2018-3-15
+ *
+ */
 public interface UserDataAuthMapper {
-    int insert(UserDataAuth record);
-
-    int insertSelective(UserDataAuth record);
+	int insertSelective(UserDataAuthPO record);
 }

@@ -1,17 +1,23 @@
 package com.cal.base.system.mapper;
 
-import com.cal.base.system.entity.po.UserRole;
+import java.util.List;
 
+import com.cal.base.system.entity.po.UserRolePO;
+
+/**
+ * 用户角色关系Mapper,主要操作的是system_user_role表
+ * @author andyc 2018-3-15
+ *
+ */
 public interface UserRoleMapper {
     int deleteByPrimaryKey(String id);
 
-    int insert(UserRole record);
+    int insertSelective(UserRolePO record);
 
-    int insertSelective(UserRole record);
+    UserRolePO selectByPrimaryKey(String id);
 
-    UserRole selectByPrimaryKey(String id);
+    int updateByPrimaryKeySelective(UserRolePO record);
 
-    int updateByPrimaryKeySelective(UserRole record);
-
-    int updateByPrimaryKey(UserRole record);
+    // 根据用户ID获取角色ID列表
+	List<String> selectRoleIdListByUserId(Long userId);
 }

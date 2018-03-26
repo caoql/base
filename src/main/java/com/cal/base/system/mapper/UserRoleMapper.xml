@@ -1,71 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cal.base.system.mapper.UserRoleMapper" >
-  <resultMap id="BaseResultMap" type="com.cal.base.system.entity.po.UserRole" >
-    <id column="ID" property="id" jdbcType="VARCHAR" />
-    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
-    <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    ID, USER_ID, ROLE_ID
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from system_user_role
-    where ID = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from system_user_role
-    where ID = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" parameterType="com.cal.base.system.entity.po.UserRole" >
-    insert into system_user_role (ID, USER_ID, ROLE_ID
-      )
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.cal.base.system.entity.po.UserRole" >
-    insert into system_user_role
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        ID,
-      </if>
-      <if test="userId != null" >
-        USER_ID,
-      </if>
-      <if test="roleId != null" >
-        ROLE_ID,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="roleId != null" >
-        #{roleId,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cal.base.system.entity.po.UserRole" >
-    update system_user_role
-    <set >
-      <if test="userId != null" >
-        USER_ID = #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="roleId != null" >
-        ROLE_ID = #{roleId,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.cal.base.system.entity.po.UserRole" >
-    update system_user_role
-    set USER_ID = #{userId,jdbcType=VARCHAR},
-      ROLE_ID = #{roleId,jdbcType=VARCHAR}
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
+<mapper namespace="com.cal.base.system.mapper.UserRoleMapper">
+	<resultMap id="BaseResultMap" type="com.cal.base.system.entity.po.UserRolePO">
+		<id column="ID" property="id" />
+		<result column="USER_ID" property="userId" />
+		<result column="ROLE_ID" property="roleId" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ID, USER_ID, ROLE_ID
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from system_user_role
+		where ID = #{id}
+	</select>
+	
+	<!-- 根据用户ID获取角色ID列表 -->
+	<select id="selectRoleIdListByUserId" resultType="java.lang.String">
+		select
+		ROLE_ID 
+		from system_user_role
+		where USER_ID = #{value}
+	</select>
+	
+
+	<delete id="deleteByPrimaryKey">
+		delete from system_user_role
+		where ID = #{id}
+	</delete>
+
+	<insert id="insertSelective">
+		insert into system_user_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="userId != null">
+				USER_ID,
+			</if>
+			<if test="roleId != null">
+				ROLE_ID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id},
+			</if>
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="roleId != null">
+				#{roleId},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective">
+		update system_user_role
+		<set>
+			<if test="userId != null">
+				USER_ID = #{userId},
+			</if>
+			<if test="roleId != null">
+				ROLE_ID = #{roleId},
+			</if>
+		</set>
+		where ID = #{id}
+	</update>
 </mapper>

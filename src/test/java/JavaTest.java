@@ -54,7 +54,9 @@ public class JavaTest {
 		Assert.assertEquals(str, str2); 
 		
 		// System.out.println(Sha256Hash("hello","").toString());
+		System.out.println(new User().name);
 	}
+	
 }
 
 class User {

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.cal.base.system.entity.po.Role;
+import com.cal.base.system.entity.po.RolePO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/applicationContext-dao.xml" })
@@ -36,7 +36,7 @@ public class RoleMapperTest {
 
 	@Test
 	public void testInsertSelective() {
-		Role record = new Role();
+		RolePO record = new RolePO();
 		record.setName("测试角色J");
 		record.setRemark("junit单元测试新增");
 		int result = roleMapper.insertSelective(record);
@@ -47,12 +47,12 @@ public class RoleMapperTest {
 
 	@Test
 	public void testBatchInsert() {
-		List<Role> records = new LinkedList<Role>();
-		Role record1 = new Role();
+		List<RolePO> records = new LinkedList<RolePO>();
+		RolePO record1 = new RolePO();
 		record1.setRoleId(UUID.randomUUID().toString().replace("-", ""));
 		record1.setName("测试角色B1" + Math.round(10000));
 		record1.setRemark("junit单元测试批量新增");
-		Role record2 = new Role();
+		RolePO record2 = new RolePO();
 		record2.setRoleId(UUID.randomUUID().toString().replace("-", ""));
 		record2.setName("测试角色B2" + Math.round(10000));
 		record2.setRemark("junit单元测试批量新增");
@@ -61,7 +61,7 @@ public class RoleMapperTest {
 
 		int result = roleMapper.batchInsert(records);
 		Assert.assertEquals(2, result);
-		for (Role role : records) {
+		for (RolePO role : records) {
 			System.out.println("批量新增的角色ID:" + role.getRoleId());
 		}
 	}
@@ -69,15 +69,15 @@ public class RoleMapperTest {
 	@Test
 	public void testSelectByPrimaryKey() {
 		// roleId = "" // 数据库抓
-		Role r = roleMapper.selectByPrimaryKey(roleId);
+		/*Role r = roleMapper.selectByPrimaryKey(roleId);
 		Role r2 = roleMapper.selectByPrimaryKey(roleId);
 		System.out.println(r == r2);
-		System.out.println(r);
+		System.out.println(r);*/
 	}
 
 	@Test
 	public void testUpdateByPrimaryKeySelective() {
-		Role record = new Role();
+		RolePO record = new RolePO();
 		// roleId = "" // 数据库抓
 		record.setRoleId(roleId);
 		record.setRemark("一起跑测试" + Math.round(10000));
@@ -89,8 +89,8 @@ public class RoleMapperTest {
 	public void testQueryPos() {
 		Map<String, Object> map = new TreeMap<String, Object>();
 		map.put("remark", "junit");
-		List<Role> result = roleMapper.queryPos(map);
-		for (Role r : result) {
+		List<RolePO> result = roleMapper.queryPos(map);
+		for (RolePO r : result) {
 			System.out.println("查询出来的结果是："+ r);
 		}
 	}

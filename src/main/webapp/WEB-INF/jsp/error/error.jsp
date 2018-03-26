@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	pageEncoding="UTF-8" isErrorPage="true"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,14 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-eeee
-	<%-- <c:forEach items="${allErrors}" var="error">
-      <tr>
-       <td><c:out value="${error.id}"></c:out></td>
-       <td><c:out value="${error.name}"></c:out></td>
-       <td><c:out value="${error.age}"></c:out></td>
-       <td><input type="button" value="按钮"></td>
-      </tr>
-	</c:forEach> --%>
+	<b>这个是JSP页面出错后的跳转页面</b>
+	<%= exception == null ? "" : "<b>,错误信息如下:</b>" + exception.getMessage()%>
 </body>
 </html>

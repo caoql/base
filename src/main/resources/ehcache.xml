@@ -1,33 +1,14 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
-	<!-- 指定数据在磁盘中的存储位置。 -->
-	<diskStore path="E:\ehcache" />
-	<!-- 当借助CacheManager.add("demoCache")创建Cache时，EhCache便会采用<defalutCache/>指定的的管理策略 -->
-	<defaultCache 
-		<!-- 以下属性是必须的： -->
-		<!-- 在内存中缓存的element的最大数目  -->
-		maxElementsInMemory="1000"  
-		<!-- 在磁盘上缓存的element的最大数目，若是0表示无穷大 -->
-		maxElementsOnDisk="10000000
-		<!-- 设定缓存的elements是否永远不过期。如果为true，则缓存的数据始终有效，如果为false那么还要根据timeToIdleSeconds，timeToLiveSeconds判断" -->
-		eternal="false" 
-		<!-- 设定当内存缓存溢出的时候是否将过期的element缓存到磁盘上 -->
-		overflowToDisk="false" 
-		<!-- 以下属性是可选的： -->
-		<!-- 当缓存在EhCache中的数据前后两次访问的时间超过timeToIdleSeconds的属性取值时，这些数据便会删除，默认值是0,也就是可闲置时间无穷大 -->
-		timeToIdleSeconds="120"
-		<!-- 缓存element的有效生命期，默认是0.,也就是element存活时间无穷大 -->
-		timeToLiveSeconds="120" 
-		<!-- diskSpoolBufferSizeMB 这个参数设置DiskStore(磁盘缓存)的缓存区大小.默认是30MB.每个Cache都应该有自己的一个缓冲区 -->
-		<!-- diskPersistent - 在VM重启的时候是否启用磁盘保存EhCache中的数据，默认是false。 -->
-		<!-- 磁盘缓存的清理线程运行间隔，默认是120秒。每个120s，相应的线程会进行一次EhCache中数据的清理工作 -->
-		diskExpiryThreadIntervalSeconds="120"
-		<!-- 当内存缓存达到最大，有新的element加入的时候， 移除缓存中element的策略。默认是LRU（最近最少使用），可选的有LFU（最不常使用）和FIFO（先进先出） -->
-		memoryStoreEvictionPolicy="LRU">
-	</defaultCache>
-</ehcache>
 <!-- 二级应用场景: 对于访问多的查询请求且用户对查询结果实时性要求不高， 此时可采用mybatis二级缓存技术降低数据库访问量，提高访问速度，业务场景比如： 
 	耗时较高的统计分析sql、电话账单查询sql等。 实现方法如下：通过设置刷新间隔时间，由mybatis每隔一段时间自动清空缓存 ，根据数据变化频率设置缓存刷新间隔flushInterval，比如设置为30分钟、60分钟、24小时等，根据需求而定。 -->
 
 <!-- 二级缓存局限性: mybatis二级缓存对细粒度的数据级别的缓存实现不好，比如如下需求：对商品信息进行缓存，由于商品信息查询访问量大，但是要求用户每次都能查询最新的商品信息，此时如果使用mybatis的二级缓存就无法实现当一个商品变化时只刷新该商品的缓存信息而不刷新其它商品的信息，因为mybaits的二级缓存区域以mapper为单位划分， 
 	当一个商品信息变化会将所有商品信息的缓存数据全部清空。解决此类问题需要在业务层根据需求对数据有针对性缓存。 -->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+	<!-- 指定数据在磁盘中的存储位置。 -->
+	<diskStore path="E:\ehcache" />
+	<defaultCache maxElementsInMemory="1000"
+		maxElementsOnDisk="10000000" eternal="false" overflowToDisk="false"
+		timeToIdleSeconds="120" timeToLiveSeconds="120"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
+</ehcache>

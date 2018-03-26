@@ -1,17 +1,18 @@
 package com.cal.base.system.mapper;
 
-import com.cal.base.system.entity.po.RoleResource;
+import com.cal.base.system.entity.po.RoleResourcePO;
 
+/**
+ * 角色Mapper,主要操作的是system_role_resource表
+ * @author andyc 2018-3-15
+ *
+ */
 public interface RoleResourceMapper {
     int deleteByPrimaryKey(String id);
 
-    int insert(RoleResource record);
+    int insertSelective(RoleResourcePO record);
 
-    int insertSelective(RoleResource record);
+    RoleResourcePO selectByPrimaryKey(String id);
 
-    RoleResource selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(RoleResource record);
-
-    int updateByPrimaryKey(RoleResource record);
+    int updateByPrimaryKeySelective(RoleResourcePO record);
 }

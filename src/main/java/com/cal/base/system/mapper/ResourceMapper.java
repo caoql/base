@@ -1,17 +1,18 @@
 package com.cal.base.system.mapper;
 
-import com.cal.base.system.entity.po.Resource;
+import com.cal.base.system.entity.po.ResourcePO;
 
+/**
+ * 资源Mapper,主要操作的是system_resource表
+ * @author andyc 2018-3-15
+ *
+ */
 public interface ResourceMapper {
     int deleteByPrimaryKey(String resourceId);
 
-    int insert(Resource record);
+    int insertSelective(ResourcePO record);
 
-    int insertSelective(Resource record);
+    ResourcePO selectByPrimaryKey(String resourceId);
 
-    Resource selectByPrimaryKey(String resourceId);
-
-    int updateByPrimaryKeySelective(Resource record);
-
-    int updateByPrimaryKey(Resource record);
+    int updateByPrimaryKeySelective(ResourcePO record);
 }

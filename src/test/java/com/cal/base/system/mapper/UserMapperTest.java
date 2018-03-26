@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.cal.base.system.entity.po.User;
+import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 
 @RunWith(SpringJUnit4ClassRunner.class) 
@@ -33,12 +33,12 @@ public class UserMapperTest {
 	
 	@Test
 	public void testBatchInsert() {
-		List<User> records = new LinkedList<User>();
-		User user1 = new User();
+		List<UserPO> records = new LinkedList<UserPO>();
+		UserPO user1 = new UserPO();
 		user1.setAccount("测试账号1");
 		user1.setName("测试名字1");
 		
-		User user2 = new User();
+		UserPO user2 = new UserPO();
 		user2.setAccount("测试账号2");
 		user2.setName("测试名字2");
 		
@@ -47,7 +47,7 @@ public class UserMapperTest {
 		
 		int result = userMapper.batchInsert(records);
 		Assert.assertEquals(2, result);
-		for (User user: records) {
+		for (UserPO user: records) {
 			System.out.println(user.getUserId());
 		}
 	}
@@ -55,7 +55,7 @@ public class UserMapperTest {
 	@Test
 	public void testSelectByPrimaryKey() {
 		Assert.assertNotNull(userMapper);
-		User user = userMapper.selectByPrimaryKey(12L);
+		UserPO user = userMapper.selectByPrimaryKey(12L);
 		userMapper.selectByPrimaryKey(12L);
 		System.out.println(user);
 	}
@@ -67,7 +67,7 @@ public class UserMapperTest {
 	@Test
 	public void testListAll() {
 		UserParam param = new UserParam();
-		List<User> list = userMapper.listAll(param);
+		List<UserPO> list = userMapper.listAll(param);
 		System.out.println(list);
 	}
 

@@ -18,7 +18,7 @@ public class ResponseInfo {
     /**
      * 状态码的描述信息
      */
-    public String msg;
+    public String msg = "操作成功";
     
     /**
      * 数据
