@@ -116,7 +116,7 @@ public class JdbcUtil {
 				System.out.println(rs.getString("user_id") + " "
 						+ rs.getString("name"));
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			release(conn, pstmt, rs);
