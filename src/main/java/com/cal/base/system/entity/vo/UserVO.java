@@ -3,6 +3,9 @@ package com.cal.base.system.entity.vo;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.cal.base.common.exception.CommonException;
@@ -21,8 +24,10 @@ public class UserVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -2388723975808996221L;
 
-	private Long userId;
+	private String userId;
 
+	@NotNull(message="账号不能为空")
+	@Size(min=5,max=40,message="账号不得少于5个字符串，不得多于40个字符串")
 	private String account;
 
 	private String name;
@@ -64,11 +69,11 @@ public class UserVO implements Serializable {
 				+ isEnabled + ", remark=" + remark + "]";
 	}
 
-	public Long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 

@@ -5,10 +5,12 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.cal.base.common.exception.CommonException;
+
 /**
  * 读取导出配置文件帮助类
  * @author andyc
- *
+ * @modify andyC 2018-3-28
  */
 public final class ReadConfigUtil {
 	
@@ -28,7 +30,7 @@ public final class ReadConfigUtil {
 	}
 	
 	// 获取值
-	public static String getProperty(String key) throws UnsupportedEncodingException{
+	public static String getProperty(String key) {
 		if (myResources == null) {
 			load();
 		}
@@ -39,6 +41,10 @@ public final class ReadConfigUtil {
 		if (StringUtils.isBlank(value)) {
 			return null;
 		}
-		return new String(value.getBytes("ISO8859-1"), "UTF-8");
+		try {
+			return new String(value.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new CommonException("读取export/export.properties文件出错了");
+		}
 	}
 }

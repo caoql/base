@@ -18,11 +18,13 @@ public interface IUserService {
 	
 	boolean updateUser(UserVO editVo);
 
-	UserPO queryUser(Long userId);
+	// 查看
+	UserPO queryUser(String userId);
 
 	List<UserPO> selectByLoginName(String username);
-
-	boolean deleteByPrimaryKey(Long userId);
+	
+	// 删除用户
+	boolean deleteByPrimaryKey(String userId);
 
 	// 通过用户信息获取资源列表
 	ResponseInfo getResourcesByUserid(Long userId);

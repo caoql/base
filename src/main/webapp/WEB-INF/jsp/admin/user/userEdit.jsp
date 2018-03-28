@@ -17,12 +17,18 @@
 			// 发送请求处理
 			$.ajax({
 				type : 'POST',
-				url : '${path }/admin/user/edit',
+				url : '${path}/admin/user/edit',
 				data : formdata,
 				success : function(data) {
-					if (data != null && data.code == 0) {
-						$('#editForm').dialog('close');
-						$$.refreshDatagrid('datagrid');
+					if (data != null) {
+						if (data.code == 0) {
+							$('#editForm').dialog('close');
+							$$.refreshDatagrid('datagrid');
+						} else {
+							$.messager.alert('提示信息', data.msg, 'error');
+						}
+					} else {
+						$.messager.alert('提示信息','修改失败','error');
 					}
 				}
 			});

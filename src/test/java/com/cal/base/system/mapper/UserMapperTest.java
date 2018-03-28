@@ -55,8 +55,8 @@ public class UserMapperTest {
 	@Test
 	public void testSelectByPrimaryKey() {
 		Assert.assertNotNull(userMapper);
-		UserPO user = userMapper.selectByPrimaryKey(12L);
-		userMapper.selectByPrimaryKey(12L);
+		UserPO user = userMapper.selectByPrimaryKey("12");
+		userMapper.selectByPrimaryKey("12");
 		System.out.println(user);
 	}
 

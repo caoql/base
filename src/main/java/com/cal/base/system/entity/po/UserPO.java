@@ -17,7 +17,7 @@ public class UserPO implements Serializable {
 	 */
 	private static final long serialVersionUID = 7913779376098069140L;
 
-	private Long userId;
+	private String userId;
 
     private String account;
 
@@ -53,11 +53,11 @@ public class UserPO implements Serializable {
 		return ObjReflect.toString(this);
 	}
 
-	public Long getUserId() {
+	public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

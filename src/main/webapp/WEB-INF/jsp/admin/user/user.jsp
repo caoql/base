@@ -179,8 +179,11 @@
     
     // 导出
     function exportUserFun() {
-    	window.location.href= '${path}/admin/user/export?exportName=export.user';
+    	// 根据查询条件导出
+    	var jsonData = $.serializeObject($('#searchForm'));
+    	window.location.href= '${path}/admin/user/export?'+$.param(jsonData)+ '&exportName=export.user';
     }
+    
     // 添加用户
     function addUserFun() {
        $('#addForm').dialog({
@@ -202,7 +205,7 @@
             title : '编辑',
             width : 600,
             height : 350,
-            href : '${path}/admin/user/editpage?id=' + id,
+            href : '${path}/admin/user/editpage/' + id,
             modal: true ,
             buttons : [{
             	id: 'btn-save',
@@ -219,7 +222,7 @@
             	$$.progressLoad();
             	$.ajax({
             		type: 'DELETE',
-            		url: '${path }/admin/user/delete?id=' + id,
+            		url: '${path }/admin/user/delete/' + id,
             		success: function (data) {
             			if (data && data.code == 0) {
                             parent.$.messager.alert('提示', data.msg, 'info');

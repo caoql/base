@@ -12,13 +12,15 @@ import com.cal.base.system.entity.query.UserParam;
  *
  */
 public interface UserMapper {
-    int deleteByPrimaryKey(Long userId);
+	// 删除用户：通过用户ID
+    int deleteByPrimaryKey(String userId);
 
     int insertSelective(UserPO record);
     
     int batchInsert(List<UserPO> records);
 
-    UserPO selectByPrimaryKey(Long userId);
+    // 查看用户信息：通过主键-用户ID
+    UserPO selectByPrimaryKey(String userId);
 
     int updateByPrimaryKeySelective(UserPO record);
 

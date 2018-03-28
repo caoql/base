@@ -146,4 +146,13 @@ public class ObjReflect {
         items[0] = (byte) ((char) items[0] - 'a' + 'A');  
         return new String(items);  
     }  
+    
+    public static Object getFieldValue(Object dest, String field) throws Exception {
+		 // 拿到该类  
+       Class<?> clz = dest.getClass();  
+       // 拿到该属性的get方法
+       field = getMethodName(field);
+       Method method = clz.getMethod("get" + field);
+       return method.invoke(dest);
+	}
 }

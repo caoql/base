@@ -2,7 +2,6 @@ package com.cal.base.system.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -14,6 +13,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,7 +27,7 @@ import com.cal.base.system.entity.vo.UserVO;
 import com.cal.base.system.service.IUserService;
 
 /**
- * 用户控制器
+ * 用户控制器 基于Restful风格的增删改查等操作
  * 
  * @author andyc 2018-3-16
  *
@@ -111,17 +111,18 @@ public class UserController extends BaseController {
 
 	/**
 	 * 编辑用户页
+	 * 
 	 * @param model
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/editpage")
-    public String editPage(Model model, Long id) {
-		UserPO user =  userService.queryUser(id);
-        model.addAttribute("user", user);
-        return "admin/user/userEdit";
-    }
-	
+	@GetMapping("/editpage/{id}")
+	public String editPage(Model model, @PathVariable String id) {
+		UserPO user = userService.queryUser(id);
+		model.addAttribute("user", user);
+		return "admin/user/userEdit";
+	}
+
 	/**
 	 * 
 	 * @param editVo
@@ -132,7 +133,7 @@ public class UserController extends BaseController {
 	@PostMapping("/edit")
 	@ResponseBody
 	public Object updateUser(@Validated UserVO editVo, BindingResult result) {
-		logger.debug("POST请求添加的用户数据是:" + editVo);
+		logger.debug("put请求编辑的用户数据是:" + editVo);
 		// 框架层面的校验
 		if (result.hasErrors()) {
 			List<ObjectError> allErrors = result.getAllErrors();
@@ -153,30 +154,38 @@ public class UserController extends BaseController {
 		}
 		return renderSuccess("更新成功！");
 	}
-	
+
 	/**
-     * 删除用户
-     *
-     * @param id
-     * @return
-     */
-    // @RequiresRoles("admin")
-    @DeleteMapping("/delete")
-    @ResponseBody
-    public Object delete(Long id) {
-       /* Long currentUserId = getUserId();
-        if (id == currentUserId) {
-            return renderError("不可以删除自己！");
-        }*/
-        boolean flag = userService.deleteByPrimaryKey(id);
-        if (!flag) {
+	 * 删除用户
+	 *
+	 * @param id
+	 * @return
+	 */
+	// @RequiresRoles("admin")
+	@DeleteMapping("/delete/{id}")
+	@ResponseBody
+	public Object delete(@PathVariable("id") String userId) {
+		/*
+		 * Long currentUserId = getUserId(); if (id == currentUserId) { return
+		 * renderError("不可以删除自己！"); }
+		 */
+		boolean flag = userService.deleteByPrimaryKey(userId);
+		if (!flag) {
 			return renderError("删除失败！");
 		}
 		return renderSuccess("删除成功！");
-    }
-    
-    @GetMapping("export")
-    public void export(UserParam param, String exportName, HttpServletResponse response) throws Exception {
-    	userService.export(param, exportName, response);
-    }
+	}
+
+	/**
+	 * 导出
+	 * @param param
+	 * @param exportName
+	 * @param response
+	 * @throws Exception
+	 */
+	@GetMapping("export")
+	public void export(UserParam param, String exportName,
+			HttpServletResponse response) throws Exception {
+		userService.export(param, exportName, response);
+	}
 }

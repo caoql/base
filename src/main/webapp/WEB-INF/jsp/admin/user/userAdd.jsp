@@ -20,9 +20,15 @@
 				url: '${path }/admin/user/add',
 				data: formdata,
 				success: function(data) {
-					if (data != null && data.code == 0) {
-						$('#addForm').dialog('close');
-						$$.refreshDatagrid('datagrid');
+					if (data != null) {
+						if (data.code == 0) {
+							$('#addForm').dialog('close');
+							$$.refreshDatagrid('datagrid');
+						} else {
+							$.messager.alert('提示信息', data.msg, 'error');
+						}
+					} else {
+						$.messager.alert('提示信息','新增失败','error');
 					}
 				}
 			});

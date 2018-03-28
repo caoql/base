@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Service;
 import com.cal.base.SystemConstant;
 import com.cal.base.common.cache.RedisClient;
 import com.cal.base.common.enums.ErrorCodeEnum;
-import com.cal.base.common.excel.ExcelParam;
 import com.cal.base.common.excel.ExcelUtil;
-import com.cal.base.common.excel.ExportExcel;
 import com.cal.base.common.exception.ServiceException;
 import com.cal.base.common.info.ResponseInfo;
 import com.cal.base.common.info.ResponsePageInfo;
@@ -63,6 +62,7 @@ public class UserServiceImpl implements IUserService {
 		// 校验？
 		UserPO record = addVo.toUserPO();
 		int result = userMapper.insertSelective(record);
+		logger.debug("插入的生成的用户id是" + record.getUserId());
 		if (result > 0) {
 			return true;
 		} else {
@@ -76,14 +76,15 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public boolean updateUser(UserVO editVo) {
 		// 校验
-		if (editVo == null || editVo.getUserId() == null) {
+		if (editVo == null || StringUtils.isBlank(editVo.getUserId())) {
 			throw new ServiceException("userId不能为空");
 		}
 		UserPO record = editVo.toUserPO();
 		int result = userMapper.updateByPrimaryKeySelective(record);
 		// 清除缓存
 		String userRedisKey = SystemConstant.REDIS_USER_PRE +  editVo.getUserId();
-		RedisClient.del(userRedisKey);
+		long l = RedisClient.del(userRedisKey);
+		logger.debug("redis清除缓存用户id:" + editVo.getUserId() + "返回的结果是>>>"+ l);
 		if (result > 0) {
 			return true;
 		} else {
@@ -96,9 +97,9 @@ public class UserServiceImpl implements IUserService {
 	 */
 	// 这个是redis查询缓存的应用场景
 	@Override
-	public UserPO queryUser(Long userId) {
-		if (userId == null) {
-			throw new ServiceException("userId不能为空");
+	public UserPO queryUser(String userId) {
+		if (StringUtils.isBlank(userId)) {
+			throw new ServiceException("用户ID不能为空");
 		}
 		String userRedisKey = SystemConstant.REDIS_USER_PRE + userId;
 		UserPO user = (UserPO) RedisClient.get(userRedisKey);
@@ -124,14 +125,15 @@ public class UserServiceImpl implements IUserService {
 	 * 通过主键用户ID删除用户
 	 */
 	@Override
-	public boolean deleteByPrimaryKey(Long userId) {
-		if (userId == null) {
+	public boolean deleteByPrimaryKey(String userId) {
+		if (StringUtils.isBlank(userId)) {
 			throw new ServiceException("用户ID不能为空");
 		}
 		int result = userMapper.deleteByPrimaryKey(userId);
 		// 清除缓存
 		String userRedisKey = SystemConstant.REDIS_USER_PRE + userId;
-		RedisClient.del(userRedisKey);
+		Long l = RedisClient.del(userRedisKey);
+		logger.debug("redis删除用户id:" + userId + "返回的结果是>>>"+ l);
 		if (result > 0) {
 			return true;
 		} else {
@@ -181,34 +183,12 @@ public class UserServiceImpl implements IUserService {
 		return info;
 	}
 
+	// 导出
 	@Override
 	public void export(UserParam param, String exportName,
 			HttpServletResponse response) throws Exception {
 		List<UserPO> list = userMapper.listAll(param);
-		Map<String, Object> map = ExcelUtil.get(exportName);
-		// 报表导出头
-		// 文件名
-		String excelName = (String) map.get("filename");
-		// 报表头
-		String title = (String) map.get("title");
-		// 列头
-		String[] rowsName = (String[]) map.get("rowsName");;
-		// 列数据封装
-		List<Object[]>  rowList = new ArrayList<Object[]>();
-		if (list != null) {
-			for (UserPO po : list) {
-				Object[] row = new Object[rowsName.length] ;
-				for(int i = 0; i < rowsName.length; i++) {
-					row[i] = po.getAccount();
-				}
-				rowList.add(row);
-			}
-		}
-		// Excel导出公共调用
-        ExcelParam excelParam = new ExcelParam(title, rowsName, rowList ,1,null);
-        List<ExcelParam> params = new ArrayList<>();
-        params.add(excelParam);
-        ExportExcel.export(excelName, params, response);
+		ExcelUtil.export(list, exportName, response);
 	}
 
 }
