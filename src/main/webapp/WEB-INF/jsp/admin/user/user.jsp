@@ -36,13 +36,15 @@
    <!--  <shiro:hasPermission name="/admin/user/add"> -->
         <a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
         <a onclick="exportUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导出</a>
+        <a onclick="downloadUserTemplet();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导入模板下载</a>
+        <a onclick="batchImport();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">批量导入</a>
    <!--  </shiro:hasPermission> -->
 </div>
 
 <!-- 弹窗区 -->
 <div id="addForm"></div>
 <div id="editForm"></div>
-</body>
+<div id="importForm"></div>
 <script type="text/javascript">
     var userDataGrid;
     $(function() {
@@ -95,42 +97,18 @@
                 width : '60',
                 title : '性别',
                 field : 'sex',
-                align: 'center',
-                formatter : function(value, row, index) {
-                    switch (value) {
-                    case 'm':
-                        return '男';
-                    case 'w':
-                        return '女';
-                    default :	
-                    	return value;
-                    }
-                }
+                align: 'center'
             },{
                 width : '100',
                 title : '是否启用',
                 field : 'isEnabled',
-                align: 'center',
-                formatter : function(value, row, index) {
-                    switch (value) {
-                    case 1:
-                        return '正常';
-                    case 0:
-                        return '停用';
-                    default :	
-                    	return value;
-                    }
-                }
+                align: 'center'
             },{
                 width : '180',
                 title : '创建时间',
                 field : 'createTime',
                 align: 'center',
-                sortable : true,
-                formatter: function(value, row, index){
-                	var value1 = new Date(value);
-                	return $$.dateFormatter(value1);
-                }
+                sortable : true
             },{
                 width : '100',
                 title : '创建人',
@@ -141,11 +119,7 @@
                 title : '更新时间',
                 field : 'updateTime',
                 align: 'center',
-                sortable : true,
-                formatter: function(value, row, index){
-                	var value1 = new Date(value);
-                	return $$.dateFormatter(value1);
-                }
+                sortable : true
             }, {
                 width : '180',
                 title : '更新人',
@@ -182,6 +156,26 @@
     	// 根据查询条件导出
     	var jsonData = $.serializeObject($('#searchForm'));
     	window.location.href= '${path}/admin/user/export?'+$.param(jsonData)+ '&exportName=export.user';
+    }
+    
+    // 导入模板下载
+    function downloadUserTemplet() {
+    	window.location.href= '${path}/admin/user/download';
+    }
+    
+    // 批量导入
+    function batchImport() {
+    	$('#importForm').dialog({
+            title : '批量导入',
+            width : 600,
+            height : 350,
+            href : '${path}/admin/user/importpage',
+            modal: true,
+            buttons : [{
+            	id: 'btn-save',
+                text : '确认'
+            }]
+        });
     }
     
     // 添加用户
@@ -241,4 +235,5 @@
         });
     }
 </script>
+</body>
 </html>

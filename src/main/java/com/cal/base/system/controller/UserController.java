@@ -2,6 +2,7 @@ package com.cal.base.system.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.common.util.file.FileUtil;
 import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
@@ -187,5 +189,31 @@ public class UserController extends BaseController {
 	public void export(UserParam param, String exportName,
 			HttpServletResponse response) throws Exception {
 		userService.export(param, exportName, response);
+	}
+	
+	// 模板文件下载
+	@GetMapping("download")
+	public void download(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		FileUtil.download(request, response, "用户管理导入模板.xls");
+	}
+	
+	// 批量导入页面
+	@GetMapping("importpage")
+	public String importpage() {
+		logger.debug("GET请求导入用户页...");
+		return "admin/user/userImport";
+	}
+	
+	// 批量导入数据解析
+	@PostMapping("import")
+	@ResponseBody
+	public Object batchImport(HttpServletRequest request) {
+		logger.debug("Post请求批量导入数据解析...");
+		boolean flag = userService.batchImport(request);
+		if (!flag) {
+			return renderError("导入失败！");
+		}
+		return renderSuccess("导入成功！");
 	}
 }

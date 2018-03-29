@@ -1,24 +1,32 @@
 package com.cal.base.system.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cal.base.SystemConstant;
 import com.cal.base.common.cache.RedisClient;
 import com.cal.base.common.enums.ErrorCodeEnum;
 import com.cal.base.common.excel.ExcelUtil;
+import com.cal.base.common.excel.ExcelUtil2;
+import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.exception.ServiceException;
 import com.cal.base.common.info.ResponseInfo;
 import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.common.util.file.FileUtil;
+import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.common.util.page.PageUtil;
+import com.cal.base.system.entity.dto.UserListDTO;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 import com.cal.base.system.entity.vo.UserVO;
@@ -45,7 +53,7 @@ public class UserServiceImpl implements IUserService {
 		PageUtil.pageBefore(info, param);
 
 		// 2.调用dao执行方法
-		List<UserPO> list = userMapper.listAll(param);
+		List<UserListDTO> list = userMapper.listAll(param);
 
 		// 3.返回数据封装
 		PageUtil.pageAfter(info, list);
@@ -187,8 +195,68 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void export(UserParam param, String exportName,
 			HttpServletResponse response) throws Exception {
-		List<UserPO> list = userMapper.listAll(param);
+		List<UserListDTO> list = userMapper.listAll(param);
 		ExcelUtil.export(list, exportName, response);
+	}
+
+	// 批量导入
+	@Override
+	@Transactional
+	public boolean batchImport(HttpServletRequest request) {
+		List<String> filesPath = null;
+		try {
+			filesPath = FileUtil.upload(request,"xls","xlsx");// excel格式
+		}  catch (CommonException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new CommonException("文件上传失败");
+		}
+		if (filesPath != null && filesPath.size() > 0) {
+			for (String path : filesPath) {
+				try {
+					ExcelUtil2 eu = new ExcelUtil2();  
+					eu.setExcelPath(path);  
+					eu.setStartReadPos(1); //从第2行读取
+					List<String[]> list =  eu.readExcel();
+					// 删除临时文件
+					File file = new File(path);
+					if (file.exists()) {
+						file.delete();
+					}
+					return batchInsert(list);
+				} catch (Exception e) {
+					throw new CommonException("文件解析失败");
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean batchInsert(List<String[]> rowlist) {
+		List<UserPO> records = new ArrayList<UserPO>();
+		if (rowlist != null) {
+			for (String[] row : rowlist) {
+				UserPO po = new UserPO();
+				// 数据校验还没做？
+				po.setUserId(UUIDUtil.getUUID());
+				po.setAccount(row[0]);
+				po.setName(row[1]);
+				po.setPhone(row[2]);
+				if ("男".equals(row[3])) {
+					po.setSex("m");
+				} else if ("女".equals(row[3])) {
+					po.setSex("w");
+				} else {
+					po.setSex(row[3]);
+				}
+				records.add(po);
+			}
+		}
+		int result = userMapper.batchInsert(records);
+		if (result > 0){
+			return true;
+		}
+		return false;
 	}
 
 }

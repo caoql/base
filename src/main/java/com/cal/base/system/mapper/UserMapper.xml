@@ -2,13 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cal.base.system.mapper.UserMapper">
 	<!-- 开启本mapper的namespace下的二缓存,UserMapper.xml下的sql执行完成会存储到它的缓存区域（HashMap）。 
-	type：指定cache接口的实现类的类型，mybatis默认使用PerpetualCache
-	要和ehcache整合，需要配置type为ehcache实现cache接口的类型
-	注意：开启二级缓存之后查询的结果映射到的pojo必须实现序列化，因为二级缓存数据存储介质多种多样，不一定在内存。
-	 -->
+		type：指定cache接口的实现类的类型，mybatis默认使用PerpetualCache 要和ehcache整合，需要配置type为ehcache实现cache接口的类型 
+		注意：开启二级缓存之后查询的结果映射到的pojo必须实现序列化，因为二级缓存数据存储介质多种多样，不一定在内存。 -->
 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
 	<!-- <cache eviction="LRU" type="com.cal.base.common.cache.RedisCache" flushInterval="5"/> -->
-	
+
 	<resultMap id="BaseResultMap" type="com.cal.base.system.entity.po.UserPO">
 		<id column="USER_ID" property="userId" />
 		<result column="ACCOUNT" property="account" />
@@ -26,61 +24,60 @@
 		<result column="UPDATOR" property="updator" />
 	</resultMap>
 
-	<!-- 使用extends继承 -->
-	<resultMap type="com.cal.base.system.entity.dto.UserDTO" id="UserDtoResultMap" extends="BaseResultMap">
-		<!-- 配置映射的关联 -->
-		<!-- association：用于映射关联查询单个对象的信息 property：要将关联查询用户组织信息映射到UserDTO中哪个属性 javaType：映射到UserDTO的哪个属性类型 -->
-		<association property="userOrganization"
+	<!-- 界面数据展示map定义 -->
+	<resultMap type="com.cal.base.system.entity.dto.UserListDTO"
+		id="UserListDtoResultMap">
+		<id column="USER_ID" property="userId" />
+		<result column="ACCOUNT" property="account" />
+		<result column="NAME" property="name" />
+		<result column="PHONE" property="phone" />
+		<result column="SEX" property="sex" />
+		<result column="IS_ENABLED" property="isEnabled" />
+		<result column="REMARK" property="remark" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="CREATOR" property="creator" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="UPDATOR" property="updator" />
+		<!-- <association property="userOrganization"
 			javaType="com.cal.base.system.entity.po.UserOrganizationPO">
 			<result column="ORGANIZATION_ID" property="organizationId" />
 		</association>
-		<!-- 角色信息-要去重(看映射回来的数据不想等)，关键是通过主键识别(id)，配置了能够保证去重
-		一个用户关联查询出多个角色，要使用collection进行映射
-		collection：对关联查询到多条记录映射到集合对象中
-		property：将关联查询到多条记录映射到com.cal.base.system.entity.dto.UserDTO哪个属性
-		ofType：指定映射到list集合属性中pojo的类型
-		 -->
-		 <collection property="role" ofType="com.cal.base.system.entity.po.RolePO">
-		 <!-- id：角色唯 一标识
-		 	property:要将角色唯 一标识映射到com.cal.base.system.entity.po.Role的哪个属性
-		 	  -->
-		 	<!-- <id column="ROLE_ID" property="roleId"/> -->
-		 	<result column="ROLE_NAME" property="name"/>
-		 </collection>
+		<collection property="role" ofType="com.cal.base.system.entity.po.RolePO">
+			<id column="ROLE_ID" property="roleId" />
+			<result column="ROLE_NAME" property="name" />
+		</collection> -->
 	</resultMap>
 
-	<select id="listAll" resultMap="UserDtoResultMap">
-		SELECT 
-			MAIN.USER_ID, 
-			MAIN.ACCOUNT, 
-			MAIN.NAME, 
-			MAIN.PASSWORD, 
+	<select id="listAll" resultMap="UserListDtoResultMap">
+		SELECT
+			MAIN.USER_ID,
+			MAIN.ACCOUNT,
+			MAIN.NAME,
+			MAIN.PASSWORD,
 			MAIN.PHONE,
-			MAIN.SEX, 
+			MAIN.SEX,
 			MAIN.SYSCODE,
 			MAIN.ORG_ID,
-			MAIN.IS_ENABLED, 
+			MAIN.IS_ENABLED,
 			MAIN.REMARK,
-			MAIN.CREATE_TIME, 
+			MAIN.CREATE_TIME,
 			MAIN.CREATOR,
-			MAIN.UPDATE_TIME, 
+			MAIN.UPDATE_TIME,
 			MAIN.UPDATOR,
 			UO.ORGANIZATION_ID,
 			ROLE.ROLE_ID,
 			ROLE.NAME ROLE_NAME
-		FROM SYSTEM_USER MAIN 
+		FROM SYSTEM_USER MAIN
 		LEFT JOIN SYSTEM_USER_ORGANIZATION UO ON MAIN.USER_ID = UO.USER_ID
 		LEFT JOIN SYSTEM_USER_ROLE UR ON MAIN.USER_ID = UR.USER_ID
 		LEFT JOIN SYSTEM_ROLE ROLE ON UR.ROLE_ID = ROLE.ROLE_ID
 		<where>
 			<if test="account != null and account != ''">
-			AND MAIN.ACCOUNT = #{account}
+				AND MAIN.ACCOUNT = #{account}
 			</if>
 		</where>
 	</select>
 
-	<!-- 定义sql片段 id：sql片段的唯 一标识 经验：是基于单表来定义sql片段，这样话这个sql片段可重用性才高 在sql片段中不要包括 
-		where -->
 	<sql id="Base_Column_List">
 		USER_ID, ACCOUNT, NAME, PASSWORD, PHONE,
 		SEX, SYSCODE,
@@ -91,7 +88,7 @@
 
 	<!-- 使用resultMap进行输出映射 resultMap：指定定义的resultMap的id，如果这个resultMap在其它的mapper文件中，前边需要加namespace -->
 	<!-- 使用resultType进行输出映射，只有查询出来的列名和pojo中的属性名一致，该列才可以映射成功。 如果查询出来的列名和pojo的属性名不一致，通过定义一个resultMap对列名和pojo属性名之间作一个映射关系。 -->
-	<select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from system_user
@@ -162,12 +159,13 @@
 		where
 		USER_ID = #{userId}
 	</delete>
-	
-	<insert id="batchInsert" keyProperty="userId" useGeneratedKeys="true">
-		insert into system_user(ACCOUNT, NAME)
+
+	<!-- 导入批量插入数据 -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into system_user(USER_ID, ACCOUNT, NAME, PHONE, SEX)
 		values
 		<foreach collection="list" item="user" separator=",">
-			(#{user.account},#{user.name})
+			(#{user.userId},#{user.account},#{user.name},#{user.phone},#{user.sex})
 		</foreach>
 	</insert>
 
@@ -176,12 +174,12 @@
 		<!-- 将插入数据的主键返回，返回到user对象中 SELECT LAST_INSERT_ID()：得到刚insert进去记录的主键值，只适用与自增主键 
 			keyProperty：将查询到主键值设置到parameterType指定的对象的哪个属性 order：SELECT LAST_INSERT_ID()执行顺序，相对于insert语句来说它的执行顺序 
 			resultType：指定SELECT LAST_INSERT_ID()的结果类型 -->
-		<!-- <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Long">
-			SELECT LAST_INSERT_ID()
-		</selectKey> -->
+		<!-- <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Long"> 
+			SELECT LAST_INSERT_ID() </selectKey> -->
 		<!-- 使用mysql的uuid（）生成主键 执行过程： 首先通过uuid()得到主键，将主键设置到user对象的id属性中 其次在insert执行时，从user对象中取出id属性值 -->
-		<selectKey keyProperty="userId" order="BEFORE" resultType="java.lang.String"> 
-			SELECT REPLACE(uuid(),'-','') </selectKey>
+		<selectKey keyProperty="userId" order="BEFORE" resultType="java.lang.String">
+			SELECT REPLACE(uuid(),'-','')
+		</selectKey>
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="userId != null">
 				USER_ID,
@@ -305,20 +303,24 @@
 		</set>
 		where USER_ID = #{userId}
 	</update>
-	
+
 	<!-- 通过用户信息获取资源列表 -->
 	<select id="getResources" resultType="java.util.Map">
 		SELECT DISTINCT
-			SR.RESOURCE_ID as id,
-			SR.name,
-			SR.url,
-			SR.type,
-			SR.pid
+		SR.RESOURCE_ID as id,
+		SR.name,
+		SR.url,
+		SR.type,
+		SR.pid
 		FROM
-			SYSTEM_RESOURCE SR 
-		LEFT JOIN SYSTEM_ROLE_RESOURCE SRR ON SR.RESOURCE_ID = SRR.RESOURCE_ID
-		LEFT JOIN SYSTEM_USER_ROLE SUR ON SRR.ROLE_ID = SUR.ROLE_ID
-		WHERE SUR.USER_ID = #{userId}
+		SYSTEM_RESOURCE
+		SR
+		LEFT JOIN SYSTEM_ROLE_RESOURCE SRR ON SR.RESOURCE_ID =
+		SRR.RESOURCE_ID
+		LEFT JOIN SYSTEM_USER_ROLE SUR ON SRR.ROLE_ID =
+		SUR.ROLE_ID
+		WHERE
+		SUR.USER_ID = #{userId}
 		ORDER BY SR.NODE_ORDER
 	</select>
 </mapper>

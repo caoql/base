@@ -3,6 +3,7 @@ package com.cal.base.system.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.cal.base.system.entity.dto.UserListDTO;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 
@@ -24,7 +25,8 @@ public interface UserMapper {
 
     int updateByPrimaryKeySelective(UserPO record);
 
-	List<UserPO> listAll(UserParam param);
+    // 用戶管理界面数据展示
+	List<UserListDTO> listAll(UserParam param);
 
 	List<UserPO> selectByLoginName(String username);
 

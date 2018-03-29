@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.cal.base.system.entity.dto.UserListDTO;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 
@@ -67,7 +68,7 @@ public class UserMapperTest {
 	@Test
 	public void testListAll() {
 		UserParam param = new UserParam();
-		List<UserPO> list = userMapper.listAll(param);
+		List<UserListDTO> list = userMapper.listAll(param);
 		System.out.println(list);
 	}
 

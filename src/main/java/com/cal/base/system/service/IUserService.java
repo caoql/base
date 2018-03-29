@@ -2,6 +2,7 @@ package com.cal.base.system.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cal.base.common.info.ResponseInfo;
@@ -31,4 +32,7 @@ public interface IUserService {
 
 	// 导出
 	void export(UserParam param, String exportName, HttpServletResponse response) throws Exception;
+
+	// 批量导入
+	boolean batchImport(HttpServletRequest request);
 }
