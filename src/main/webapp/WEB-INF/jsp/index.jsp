@@ -35,7 +35,7 @@
            		type: 'POST',
            		url: '${path }/getresources',
            		success: function (data) {
-           			console.log(data);
+           			//console.log(data);
            			if (data && data.code == 0) {
            				generateMenu(data.data);
                      } else {

@@ -4,43 +4,27 @@
 <script type="text/javascript">
 	var resourceTree;
 	$(function() {
-		resourceTree = $('#resourceTree')
-				.tree(
-						{
+		resourceTree = $('#resourceTree').tree({
 							url : '${path }/admin/resource/allTrees',
 							parentField : 'pid',
 							lines : true,
 							checkbox : true,
-							onClick : function(node) {
-							},
 							onLoadSuccess : function(node, data) {
 								$$.progressLoad();
-								$
-										.post(
-												'${path }/admin/role/findResourceIdListByRoleId',
-												{
-													id : '${id}'
-												},
-												function(result) {
-													console.log(result);
-													var ids = [];
-													if (result.code == true
-															&& result.data != undefined) {
-														ids = result.data;
-													}
-													for (var i = 0; i < ids.length; i++) {
-														if (resourceTree.tree(
-																'find', ids[i])) {
-															resourceTree
-																	.tree(
-																			'check',
-																			resourceTree
-																					.tree(
-																							'find',
-																							ids[i]).target);
-														}
-													}
-												}, 'json');
+								$.post('${path }/admin/role/findResourceIdListByRoleId',
+										{id : '${id}'},
+										function(result) {
+											console.log(result);
+											var ids = [];
+											if (result != null && result.code == 0 && result.data != undefined) {
+												ids = result.data;
+											}
+											for (var i = 0; i < ids.length; i++) {
+												if (resourceTree.tree('find', ids[i])) {
+													resourceTree.tree('check',resourceTree.tree('find',ids[i]).target);
+												}
+											}
+										}, 'json');
 								$$.progressClose();
 							},
 							cascadeCheck : false
@@ -121,20 +105,17 @@
 		}
 	}
 </script>
-<div id="roleGrantLayout" class="easyui-layout"
-	data-options="fit:true,border:false">
-	<div data-options="region:'west'" title="系统资源"
-		style="width: 300px; padding: 1px;">
+<div id="roleGrantLayout" class="easyui-layout" data-options="fit:true,border:false">
+	<div data-options="region:'west'" title="系统资源" style="width: 300px; padding: 1px;">
 		<div class="well well-small">
-			<form id="roleGrantForm" method="post">
+			<form id="roleGrantForm">
 				<input name="id" type="hidden" value="${id}" readonly="readonly">
 				<ul id="resourceTree"></ul>
 				<input id="resourceIds" name="resourceIds" type="hidden" />
 			</form>
 		</div>
 	</div>
-	<div data-options="region:'center'" title=""
-		style="overflow: hidden; padding: 10px;">
+	<div data-options="region:'center'" title="" style="overflow: hidden; padding: 10px;">
 		<div class="role-button">
 			<button class="btn btn-success" onclick="checkAll();">全选</button>
 			<br /> <br />

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,23 +87,49 @@ public class ResourceService {
 	public List<Tree> selectAllTree() {
 		// 获取所有的资源 tree形式，展示
 		List<Tree> trees = new ArrayList<Tree>();
-		List<ResourcePO> resources = this.selectAll();
-		if (resources == null) {
-			return trees;
-		}
-		for (ResourcePO resource : resources) {
-			Tree tree = new Tree();
-			tree.setId(resource.getResourceId());
-			tree.setPid(resource.getPid());
-			tree.setText(resource.getName());
-			tree.setAttributes(resource.getUrl());
-			trees.add(tree);
-		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<ResourcePO> resources =  resourceMapper.queryAll(map);
+		// 对数据进行处理
+        if (resources != null && resources.size() > 0) {
+            int len = resources.size();
+            for (int i = 0; i < len; i++) {
+                ResourcePO po = resources.get(i);
+                // 第一轮先拿出主菜单
+                if (StringUtils.isBlank(po.getPid())) {
+                    // 封装树形数据一级结构
+                    Tree tree = new Tree();
+                    tree.setId(po.getResourceId());
+                    tree.setText(po.getName());
+                    tree.setAttributes(po.getUrl());
+                    trees.add(tree);
+                }
+            }
+        }
+        loopChilldTree(resources, trees);
 		return trees;
 	}
 
-	public List<ResourcePO> selectAll() {
-		Map<String, Object> map = new HashMap<String, Object>();
-		return resourceMapper.queryAll(map);
-	}
+	private void loopChilldTree(List<ResourcePO> resultList, List<Tree> trees) {
+        for (Tree m : trees) {
+            String resourceId = m.getId();
+            List<Tree> childMenu = new ArrayList<Tree>();
+            if (resultList != null && resultList.size() > 0) {
+                int len = resultList.size();
+                for (int i = 0; i < len; i++) {
+                    ResourcePO r = resultList.get(i);
+                    // 第二轮拿出子菜单
+                    if (resourceId.equals(r.getPid())) {
+                        Tree tree = new Tree();
+                        tree.setId(r.getResourceId());
+                        tree.setText(r.getName());
+                        tree.setPid(r.getPid());
+                        tree.setAttributes(r.getUrl());
+                        childMenu.add(tree);
+                    }
+                }
+                loopChilldTree(resultList, childMenu);
+            }
+            m.setChildren(childMenu);
+        }
+    }
 }
