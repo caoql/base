@@ -1,4 +1,4 @@
-package com.cal.base.system.service.impl;
+package com.cal.base.system.service;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +15,6 @@ import com.cal.base.system.entity.po.RolePO;
 import com.cal.base.system.mapper.RoleMapper;
 import com.cal.base.system.mapper.RoleResourceMapper;
 import com.cal.base.system.mapper.UserRoleMapper;
-import com.cal.base.system.service.IRoleService;
 
 /**
  * 角色相关的逻辑业务处理Service
@@ -24,7 +23,7 @@ import com.cal.base.system.service.IRoleService;
  *
  */
 @Service
-public class RoleServiceImpl implements IRoleService {
+public class RoleService {
 	// 日志记录器
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -37,7 +36,7 @@ public class RoleServiceImpl implements IRoleService {
 	private RoleResourceMapper roleResourceMapper;
 
 	// 获得角色和资源列表
-	@Override
+	
 	public Map<String, Set<String>> selectResourceMapByUserId(String userId) {
 		Map<String, Set<String>> resourceMap = new HashMap<String, Set<String>>();
 		List<String> roleIdList = userRoleMapper.selectRoleIdListByUserId(userId);

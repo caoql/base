@@ -1,4 +1,4 @@
-package com.cal.base.system.service.impl;
+package com.cal.base.system.service;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,10 +34,9 @@ import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 import com.cal.base.system.entity.vo.UserVO;
 import com.cal.base.system.mapper.UserMapper;
-import com.cal.base.system.service.IUserService;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserService {
 
 	// 日志记录器
 	private Logger logger = Logger.getLogger(getClass());
@@ -49,7 +48,7 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * 用户管理列表数据展示
 	 */
-	@Override
+	
 	public ResponsePageInfo listAll(UserParam param) {
 		ResponsePageInfo info = new ResponsePageInfo();
 		// 1.请求参数封装
@@ -68,7 +67,7 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * 添加用户
 	 */
-	@Override
+	
 	public boolean insertUser(UserVO addVo) {
 		// 校验？
 		UserPO record = addVo.toUserPO();
@@ -91,7 +90,7 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * 编辑用户
 	 */
-	@Override
+	
 	public boolean updateUser(UserVO editVo) {
 		// 校验
 		if (editVo == null || StringUtils.isBlank(editVo.getUserId())) {
@@ -114,7 +113,7 @@ public class UserServiceImpl implements IUserService {
 	 * 查看
 	 */
 	// 这个是redis查询缓存的应用场景
-	@Override
+	
 	public UserPO queryUser(String userId) {
 		if (StringUtils.isBlank(userId)) {
 			throw new ServiceException("用户ID不能为空");
@@ -130,7 +129,7 @@ public class UserServiceImpl implements IUserService {
 		return user;
 	}
 
-	@Override
+	
 	public List<UserPO> selectByLoginName(String username) {
 		if (username == null) {
 			throw new ServiceException("username不能为空");
@@ -142,7 +141,7 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * 通过主键用户ID删除用户
 	 */
-	@Override
+	
 	public boolean deleteByPrimaryKey(String userId) {
 		if (StringUtils.isBlank(userId)) {
 			throw new ServiceException("用户ID不能为空");
@@ -160,7 +159,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	// 通过用户信息获取资源列表
-	@Override
+	
 	public ResponseInfo getResourcesByUserid(Long userId) {
 		ResponseInfo info = new ResponseInfo();
 		List<Map<String, Object>> resultList = userMapper.getResources(userId);
@@ -202,7 +201,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	// 导出
-	@Override
+	
 	public void export(UserParam param, String exportName,
 			HttpServletResponse response) throws Exception {
 		List<UserListDTO> list = userMapper.listAll(param);
@@ -210,7 +209,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	// 批量导入
-	@Override
+	
 	@Transactional
 	public boolean batchImport(HttpServletRequest request) {
 		List<String> filesPath = null;

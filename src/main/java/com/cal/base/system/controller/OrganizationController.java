@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.cal.base.system.service.IOrganizationService;
+import com.cal.base.system.service.OrganizationService;
 
 /**
  * 组织管理控制器
@@ -23,7 +23,7 @@ public class OrganizationController extends BaseController {
 	
 	// 注入组织资源
 	@Autowired
-	private IOrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	/**
 	 * 部门管理主页

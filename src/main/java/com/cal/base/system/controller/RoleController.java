@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.cal.base.system.service.IRoleService;
+import com.cal.base.system.service.RoleService;
 
 /**
  * 角色控制器
@@ -22,7 +22,7 @@ public class RoleController extends BaseController {
 	
 	// 注入角色Service
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     /**
      * 权限管理页

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.cal.base.system.service.IResourceService;
+import com.cal.base.system.service.ResourceService;
 
 /**
  * 资源管理控制器
@@ -23,7 +23,7 @@ public class ResourceController extends BaseController {
 
 	// 注入资源Service
 	@Autowired
-	private IResourceService resourceService;
+	private ResourceService resourceService;
 
 	@GetMapping("/manager")
 	public String manager() {

@@ -1,11 +1,10 @@
-package com.cal.base.system.service.impl;
+package com.cal.base.system.service;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cal.base.system.mapper.OrganizationMapper;
-import com.cal.base.system.service.IOrganizationService;
+import com.cal.base.system.mapper.ResourceMapper;
 
 /**
  * 组织相关的业务处理Service
@@ -14,12 +13,12 @@ import com.cal.base.system.service.IOrganizationService;
  *
  */
 @Service
-public class OrganizationServiceImpl implements IOrganizationService {
+public class ResourceService {
 	
 	// 日志记录器
 	private Logger logger = Logger.getLogger(getClass());
 	
 	// 注入组织Mapper
 	@Autowired
-	private OrganizationMapper organizationMapper;
+	private ResourceMapper resourceMapper;
 }

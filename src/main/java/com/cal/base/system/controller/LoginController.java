@@ -29,8 +29,8 @@ import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponseInfo;
 import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.po.UserPO;
-import com.cal.base.system.service.IRoleService;
-import com.cal.base.system.service.IUserService;
+import com.cal.base.system.service.RoleService;
+import com.cal.base.system.service.UserService;
 
 @Controller
 public class LoginController extends BaseController {
@@ -40,11 +40,11 @@ public class LoginController extends BaseController {
 
 	// 注入用户Service
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 	
 	// 注入角色Service
 	@Autowired
-	private IRoleService roleService;
+	private RoleService roleService;
 	
 	/**
 	 * 访问首页

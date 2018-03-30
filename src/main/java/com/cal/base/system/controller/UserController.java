@@ -26,7 +26,7 @@ import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 import com.cal.base.system.entity.vo.UserVO;
-import com.cal.base.system.service.IUserService;
+import com.cal.base.system.service.UserService;
 
 /**
  * 用户控制器 基于Restful风格的增删改查等操作
@@ -42,7 +42,7 @@ public class UserController extends BaseController {
 
 	// 注入用戶Service
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 
 	/**
 	 * 用戶管理页

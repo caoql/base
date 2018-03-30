@@ -29,50 +29,11 @@
 		where ROLE_ID = #{roleId}
 	</select>
 
-	<!-- 根据角色ID获取资源列表 -->
-	<select id="selectResourceListByRoleId" resultType="java.util.HashMap">
-		SELECT
-			e.RESOURCE_ID AS id,
-			e.url AS url
-		FROM
-		system_role r
-		LEFT JOIN system_role_resource re ON r.ROLE_ID = re.ROLE_ID
-		LEFT JOIN
-		system_resource e ON re.RESOURCE_ID = e.RESOURCE_ID
-		WHERE
-		r.ROLE_ID = #{roleId}
-	</select>
-
-	<!-- 批量查询 -->
-	<select id="queryPos" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from system_role
-		<bind name="remarkLike" value="'%' + remark + '%'" />
-		<where>
-			<!-- <if test="remark != null and remark != ''"> REMARK LIKE CONCAT('%', 
-				#{remark}, '%') </if> -->
-			<if test="remark != null and remark != ''">
-				REMARK LIKE #{remarkLike}
-			</if>
-		</where>
-	</select>
 
 	<delete id="deleteByPrimaryKey">
 		delete from system_role
 		where ROLE_ID = #{roleId}
 	</delete>
-
-	<!-- 批量新增 -->
-	<insert id="batchInsert" parameterType="java.util.List">
-		insert into
-		system_role(ROLE_ID,NAME,DESCRIPTION,SYSCODE,ORG_ID,IS_ENABLED,REMARK,CREATE_TIME,CREATOR,UPDATE_TIME,UPDATOR)
-		values
-		<foreach collection="list" item="role" index="index"
-			separator=",">
-			(#{role.roleId},#{role.name},#{role.description},#{role.syscode},#{role.orgId},#{role.isEnabled},#{role.remark},#{role.createTime},#{role.creator},#{role.updateTime},#{role.updator})
-		</foreach>
-	</insert>
 
 	<insert id="insertSelective">
 		<selectKey keyColumn="ROLE_ID" keyProperty="roleId" order="BEFORE"
@@ -184,4 +145,46 @@
 		</set>
 		where ROLE_ID = #{roleId}
 	</update>
+	
+	
+	<!-- 根据角色ID获取资源列表 -->
+	<select id="selectResourceListByRoleId" resultType="java.util.HashMap">
+		SELECT
+			e.RESOURCE_ID AS id,
+			e.url AS url
+		FROM
+		system_role r
+		LEFT JOIN system_role_resource re ON r.ROLE_ID = re.ROLE_ID
+		LEFT JOIN
+		system_resource e ON re.RESOURCE_ID = e.RESOURCE_ID
+		WHERE
+		r.ROLE_ID = #{roleId}
+	</select>
+
+	<!-- 批量查询 -->
+	<select id="queryPos" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from system_role
+		<bind name="remarkLike" value="'%' + remark + '%'" />
+		<where>
+			<!-- <if test="remark != null and remark != ''"> REMARK LIKE CONCAT('%', 
+				#{remark}, '%') </if> -->
+			<if test="remark != null and remark != ''">
+				REMARK LIKE #{remarkLike}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 批量新增 -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into
+		system_role(ROLE_ID,NAME,DESCRIPTION,SYSCODE,ORG_ID,IS_ENABLED,REMARK,CREATE_TIME,CREATOR,UPDATE_TIME,UPDATOR)
+		values
+		<foreach collection="list" item="role" index="index"
+			separator=",">
+			(#{role.roleId},#{role.name},#{role.description},#{role.syscode},#{role.orgId},#{role.isEnabled},#{role.remark},#{role.createTime},#{role.creator},#{role.updateTime},#{role.updator})
+		</foreach>
+	</insert>
 </mapper>

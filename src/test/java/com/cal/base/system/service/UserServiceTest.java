@@ -1,6 +1,7 @@
 package com.cal.base.system.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +13,10 @@ import com.cal.base.system.entity.vo.UserVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/applicationContext-dao.xml","classpath:spring/applicationContext-common.xml","classpath:spring/applicationContext-transaction.xml" })
-public class IUserServiceTest {
+public class UserServiceTest {
 	
 	@Autowired
-	private IUserService service;
+	private UserService service;
 
 	@Test
 	public void testListAll() {

@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cal.base.system.entity.po.UserPO;
-import com.cal.base.system.service.IRoleService;
-import com.cal.base.system.service.IUserService;
+import com.cal.base.system.service.RoleService;
+import com.cal.base.system.service.UserService;
 
 /**
  * @description Realm：可以有1个或多个Realm，可以认为是安全实体数据源，即用于获取安全实体的；
@@ -41,11 +41,11 @@ public class ShiroDbRealm extends AuthorizingRealm {
 
 	// 注入用户Service
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 
 	// 注入角色Service
 	@Autowired
-	private IRoleService roleService;
+	private RoleService roleService;
 
 	public ShiroDbRealm(CacheManager cacheManager) {
 		super(cacheManager);
