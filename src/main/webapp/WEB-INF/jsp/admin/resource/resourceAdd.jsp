@@ -1,125 +1,108 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="../../common/global.jsp" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="../../common/global.jsp"%>
 <script type="text/javascript">
-    $(function() {
-        $('#resourceAddPid').combotree({
-            url : '${path }/resource/allTree',
-            parentField : 'pid',
-            lines : true,
-            panelHeight : 'auto'
-        });
-
-        $('#resourceAddForm').form({
-            url : '${path }/resource/add',
-            onSubmit : function() {
-                progressLoad();
-                var isValid = $(this).form('validate');
-                if (!isValid) {
-                    progressClose();
-                }
-                return isValid;
-            },
-            success : function(result) {
-                progressClose();
-                result = $.parseJSON(result);
-                if (result.success) {
-                    parent.$.modalDialog.openner_treeGrid.treegrid('reload');//之所以能在这里调用到parent.$.modalDialog.openner_treeGrid这个对象，是因为resource.jsp页面预定义好了
-                    parent.indexMenuZTree.reAsyncChildNodes(null, "refresh");
-                    parent.$.modalDialog.handler.dialog('close');
-                } else {
-                    var form = $('#resourceAddForm');
-                    parent.$.messager.alert('提示', eval(result.msg), 'warning');
-                }
-            }
-        });
-        
-    });
+	$(function() {
+		// 绑定提交
+		$('#btn-save').on('click', function() {
+			// 校验表单默认规则
+			if (!$('#resourceAddForm').form('validate')) {
+				return false;
+			}
+			// 获取数据
+			var formdata = $$.serializeToJson('#resourceAddForm', true);
+			if (!formdata) {
+				return false;
+			}
+			// 发送请求处理
+			$.ajax({
+				type: 'POST',
+				url: '${path }/admin/resource/add',
+				data: formdata,
+				success: function(data) {
+					if (data != null) {
+						if (data.code == 0) {
+							$('#addForm').dialog('close');
+							$$.refreshDatagrid('datagrid');
+						} else {
+							$.messager.alert('提示信息', data.msg, 'error');
+						}
+					} else {
+						$.messager.alert('提示信息','新增失败','error');
+					}
+				}
+			});
+		});
+	});
 </script>
-<div style="padding: 3px;">
-    <form id="resourceAddForm" method="post" class="edit-user-pwd resource-form">
-	    <div class="wraper">
-	        <table cellpadding="0" cellspacing="0">
-	            <tbody>
-	                <tr>
-	                    <td width="85" align="right">资源名称：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-	                            <input name="name" type="text" placeholder="请输入资源名称" class="easyui-validatebox span2" data-options="required:true" >
-	                        </div>
-	                    </td>
-	                    <td width="85" align="right">资源类型：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-	                            <select name="resourceType" class="easyui-combobox" data-options="width:140,height:29,editable:false,panelHeight:'auto'">
-			                        <option value="0">菜单</option>
-			                        <option value="1">按钮</option>
-			                    </select>
-	                        </div>
-	                    </td>
-	                </tr>
-	                <tr>
-	                    <td width="85" align="right">资源路径：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-	                            <input name="url" type="text" placeholder="请输入资源路径" class="easyui-validatebox span2" data-options="required:true" >
-	                        </div>
-	                    </td>
-	                    <td width="85" align="right">打开方式：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-			                    <select name="openMode" class="easyui-combobox" data-options="width:140,height:29,editable:false,panelHeight:'auto'">
-			                        <option>无(用于上层菜单)</option>
-			                        <option value="ajax" selected="selected">ajax</option>
-			                        <option value="iframe">iframe</option>
-			                    </select>
-	                        </div>
-	                    </td>
-	                </tr>
-	                <tr>
-	                    <td width="85" align="right">菜单图标：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-	                            <input name="icon" />
-	                        </div>
-	                    </td>
-	                    <td width="85" align="right">排序：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-			                    <input name="seq" value="0"  class="easyui-numberspinner" style="width: 140px; height: 29px;" required="required" data-options="editable:false">
-	                        </div>
-	                    </td>
-	                </tr>
-	                <tr>
-	                    <td width="85" align="right">状态：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-	                            <select name="status" class="easyui-combobox" data-options="width:140,height:29,editable:false,panelHeight:'auto'">
-			                        <option value="0">正常</option>
-			                        <option value="1">停用</option>
-			                    </select>
-	                        </div>
-	                    </td>
-	                    <td width="85" align="right">菜单状态：</td>
-	                    <td>
-	                        <div class="edit-user-pwd-td">
-			                    <select name="opened" class="easyui-combobox" data-options="width:140,height:29,editable:false,panelHeight:'auto'">
-			                        <option value="0">关闭</option>
-			                        <option value="1">打开</option>
-			                    </select>
-		                    </div>
-	                    </td>
-	                </tr>
-	                <tr>
-	                    <td width="85" align="right">上级资源：</td>
-	                    <td colspan="3">
-	                        <div class="edit-user-pwd-td">
-	                            <select id="resourceAddPid" name="pid" style=" height: 29px;"></select>
-	                            <a class="easyui-linkbutton clear-button" href="javascript:void(0)" onclick="$('#pid').combotree('clear');">清空</a>
-	                        </div>
-	                    </td>
-	                </tr>
-	            </tbody>
-	        </table>
-	    </div>
-    </form>
+<div data-options="fit:true,border:false">
+	<form id="resourceAddForm" method="post">
+		<div>
+			<table>
+				<tbody>
+					<tr>
+						<td align="right">资源名称：</td>
+						<td><input name="name" type="text" placeholder="请输入角色名称"
+							class="easyui-validatebox" data-options="required:true">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">资源类型：</td>
+						<td><input type="text" name="type" class="easyui-combobox"
+							data-options="required:true,editable:false,panelHeight:'auto',
+							valueField:'value', textField:'text',
+							data: [{
+								value: 'F',
+								text: '菜单组'
+							},{
+								value: 'A',
+								text: '菜单'
+							},{
+								value: 'D',
+								text: '动作'
+							}]">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">URL：</td>
+						<td><input name="url" type="text" placeholder="请输入URL"
+							class="easyui-validatebox" data-options="required:true">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">顺序：</td>
+						<td><input name="nodeOrder" type="text" placeholder="请输入URL"
+							class="easyui-numberbox" data-options="required:false">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">父级资源ID：</td>
+						<td><input name="pid" type="text" placeholder="请输入URL"
+							class="easyui-validatebox" data-options="required:false">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">描述：</td>
+						<td><input name="description" type="text"
+							placeholder="请输入描述" class="easyui-validatebox"
+							data-options="required:false"></td>
+					</tr>
+					<tr>
+						<td align="right">是否启用：</td>
+						<td><input type="text" name="isEnabled" class="easyui-combobox"
+							data-options="editable:false,panelHeight:'auto',
+							valueField:'value', textField:'text',
+							data: [{
+								value: '1',
+								text: '启用'
+							},{
+								value: '0',
+								text: '停用'
+							}]">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
 </div>

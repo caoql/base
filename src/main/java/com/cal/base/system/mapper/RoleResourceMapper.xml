@@ -24,6 +24,9 @@
 	</delete>
 
 	<insert id="insertSelective">
+		<selectKey keyColumn="ID" keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			SELECT REPLACE(UUID(),'-','')
+		</selectKey>
 		insert into system_role_resource
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -61,4 +64,10 @@
 		</set>
 		where ID = #{id}
 	</update>
+	
+	<!-- 通过角色ID删除资源 -->
+	<delete id="deleteByRoleId">
+		delete from system_role_resource
+		where ROLE_ID = #{value}
+	</delete>
 </mapper>

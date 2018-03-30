@@ -15,4 +15,7 @@ public interface RoleResourceMapper {
     RoleResourcePO selectByPrimaryKey(String id);
 
     int updateByPrimaryKeySelective(RoleResourcePO record);
+
+    // 通过角色ID删除资源
+	int deleteByRoleId(String roleId);
 }

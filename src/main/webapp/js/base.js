@@ -151,3 +151,22 @@ $.serializeObject = function(form) {
 	});
 	return o;
 };
+
+/**
+ * 
+ * 接收一个以逗号分割的字符串，返回List，list里每一项都是一个字符串
+ * 
+ * @returns list
+ */
+$.stringToList = function(value) {
+    if (value != undefined && value != '') {
+        var values = [];
+        var t = value.split(',');
+        for ( var i = 0; i < t.length; i++) {
+            values.push('' + t[i]);/* 避免他将ID当成数字 */
+        }
+        return values;
+    } else {
+        return [];
+    }
+};

@@ -40,8 +40,6 @@
 			resultType="java.lang.String">
 			SELECT replace(uuid(),"-","")
 		</selectKey>
-		<!-- <bind name="roleId" value='@java.util.UUID@randomUUID().toString().replace("-", 
-			"")' /> -->
 		insert into system_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="roleId != null">
@@ -176,6 +174,43 @@
 		</where>
 	</select>
 	
+	<!-- 角色界面数据查询展示Map -->
+	<resultMap type="com.cal.base.system.entity.dto.RoleListDTO" id="RoleListDtoMap">
+		<id column="ROLE_ID" property="roleId"/>
+		<result column="NAME" property="name"/>
+		<result column="DESCRIPTION" property="description" />
+		<result column="IS_ENABLED" property="isEnabled" />
+		<result column="REMARK" property="remark" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="CREATOR" property="creator" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="UPDATOR" property="updator" />
+	</resultMap>
+	
+	<!-- 角色界面数据查询展示 -->
+	<select id="listAll" resultMap="RoleListDtoMap">
+		SELECT
+			role.ROLE_ID,
+			role. NAME,
+			role.DESCRIPTION,
+			role.IS_ENABLED,
+			role.REMARK,
+			role.CREATE_TIME,
+			role.CREATOR,
+			role.UPDATE_TIME,
+			role.UPDATOR
+		FROM
+			system_role role
+			<where>
+				<if test="name != null and name != ''">
+					AND role.NAME = #{name}
+				</if>
+				<if test="isEnabled != null and isEnabled != ''">
+					AND role.IS_ENABLED = #{isEnabled}
+				</if>
+			</where>
+			ORDER BY role.CREATE_TIME DESC
+	</select>
 	
 	<!-- 批量新增 -->
 	<insert id="batchInsert" parameterType="java.util.List">
@@ -187,4 +222,14 @@
 			(#{role.roleId},#{role.name},#{role.description},#{role.syscode},#{role.orgId},#{role.isEnabled},#{role.remark},#{role.createTime},#{role.creator},#{role.updateTime},#{role.updator})
 		</foreach>
 	</insert>
+	
+	<select id="selectResourceIdListByRoleId" resultType="java.lang.String">
+		SELECT
+			srr.resource_id AS id
+		FROM
+			system_role sr
+		LEFT JOIN system_role_resource srr ON sr.ROLE_ID = srr.ROLE_ID
+		WHERE
+			sr.ROLE_ID = #{value}
+	</select>
 </mapper>

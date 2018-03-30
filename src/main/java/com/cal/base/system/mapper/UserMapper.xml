@@ -77,6 +77,7 @@
 				AND MAIN.ACCOUNT = #{account}
 			</if>
 		</where>
+		ORDER BY MAIN.CREATE_TIME DESC
 	</select>
 
 	<sql id="Base_Column_List">

@@ -1,181 +1,252 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="../../common/global.jsp" %>
-<style>
-.datagrid-header td{
-	font-weight: bold;
-}
-</style>
-<script type="text/javascript">
-    var resourceTreeGrid;
-    $(function() {
-        resourceTreeGrid = $('#resourceTreeGrid').treegrid({
-            url : '${path }/resource/treeGrid',
-            idField : 'id',
-            treeField : 'name',
-            parentField : 'pid',
-            fit : true,
-            fitColumns : false,
-            border : false,
-            frozenColumns : [ [ {
-                title : '编号',
-                field : 'id',
-                width : 100
-            } ] ],
-            columns : [ [ {
-                field : 'name',
-                title : '资源名称',
-                width : 180
-            }, {
-                field : 'url',
-                title : '资源路径',
-                width : 200
-            }, {
-                field : 'openMode',
-                title : '打开方式',
-                width : 100
-            }, {
-                field : 'opened',
-                title : '菜单状态',
-                width : 100,
-                formatter : function(value, row, index) {
-                    if (value == 1) {
-                        return '打开';
-                    } else {
-                        return '关闭';
-                    }
-                }
-            }, {
-                field : 'seq',
-                title : '排序',
-                width : 60
-            }, {
-                field : 'iconCls',
-                title : '图标',
-                width : 150
-            }, {
-                field : 'resourceType',
-                title : '资源类型',
-                width : 80,
-                formatter : function(value, row, index) {
-                    switch (value) {
-                    case 0:
-                        return '菜单';
-                    case 1:
-                        return '按钮';
-                    }
-                }
-            }, {
-                field : 'pid',
-                title : '上级资源ID',
-                width : 170,
-                hidden : true
-            }, {
-                field : 'status',
-                title : '状态',
-                width : 100,
-                formatter : function(value, row, index) {
-                    switch (value) {
-                    case 0:
-                        return '正常';
-                    case 1:
-                        return '停用';
-                    }
-                }
-            }, {
-                field : 'action',
-                title : '操作',
-                width : 220,
-                formatter : function(value, row, index) {
-                    var str = '';
-                        <shiro:hasPermission name="/resource/edit">
-                            str += $.formatString('<a href="javascript:void(0)" class="resource-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editResourceFun(\'{0}\');" >编辑</a>', row.id);
-                        </shiro:hasPermission>
-                        <shiro:hasPermission name="/resource/delete">
-                            str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="resource-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteResourceFun(\'{0}\');" >删除</a>', row.id);
-                        </shiro:hasPermission>
-                    return str;
-                }
-            } ] ],
-            onLoadSuccess:function(data){
-                $('.resource-easyui-linkbutton-edit').linkbutton({text:'编辑'});
-                $('.resource-easyui-linkbutton-del').linkbutton({text:'删除'});
-            },
-            toolbar : '#resourceToolbar'
-        });
-    });
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%-- 引入通用的JSP处理 --%>
+<%@ include file="../../common/global.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<%@ include file="../../common/base.jsp"%>
+<title>资源管理界面</title>
+</head>
+<body>
+	<!-- 查询条件展示区域  begin-->
+	<div>
+		<form id="searchForm" onsubmit="return false">
+			<table>
+				<tr>
+					<td><label for="name">资源名称:</label></td>
+					<td><input type="text" id="name" name="name"></td>
+					<td align="right">是否启用：</td>
+					<td><input type="text" name="isEnabled"
+						class="easyui-combobox"
+						data-options="editable:false,panelHeight:'auto',
+							valueField:'value', textField:'text',
+							data: [{
+								value: '1',
+								text: '启用'
+							},{
+								value: '0',
+								text: '停用'
+							}]">
+					</td>
+					<td align="right">资源类型：</td>
+					<td><input type="text" name="type" class="easyui-combobox"
+						data-options="editable:false,panelHeight:'auto',
+							valueField:'value', textField:'text',
+							data: [{
+								value: 'F',
+								text: '菜单组'
+							},{
+								value: 'A',
+								text: '菜单'
+							},{
+								value: 'D',
+								text: '动作'
+							}]">
+					</td>
+				</tr>
+			</table>
+			<div class="form-button">
+				<a href="javascript:void(0);" class="easyui-linkbutton"
+					data-options="plain:true" onclick="searchFun();">查询</a> <a
+					href="javascript:void(0);" class="easyui-linkbutton"
+					data-options="plain:true" onclick="cleanFun();">清空</a>
+			</div>
+		</form>
+	</div>
+	<!-- 查询条件展示区域  end-->
 
-    function editResourceFun(id) {
-        if (id != undefined) {
-            resourceTreeGrid.treegrid('select', id);
-        }
-        var node = resourceTreeGrid.treegrid('getSelected');
-        if (node) {
-            parent.$.modalDialog({
-                title : '编辑',
-                width : 500,
-                height : 350,
-                href : '${path }/resource/editPage?id=' + node.id,
-                buttons : [ {
-                    text : '确定',
-                    handler : function() {
-                        parent.$.modalDialog.openner_treeGrid = resourceTreeGrid;//因为添加成功之后，需要刷新这个treeGrid，所以先预定义好
-                        var f = parent.$.modalDialog.handler.find('#resourceEditForm');
-                        f.submit();
-                    }
-                } ]
-            });
-        }
-    }
+	<!-- 数据展示 begin -->
+	<div class="easyui-layout" data-options="fit:true,border:false">
+		<table id="datagrid" class="easyui-datagrid" title="资源界面">
+		</table>
+	</div>
+	<!-- 数据展示 end -->
 
-    function deleteResourceFun(id) {
-        if (id != undefined) {
-            resourceTreeGrid.treegrid('select', id);
-        }
-        var node = resourceTreeGrid.treegrid('getSelected');
-        if (node) {
-            parent.$.messager.confirm('询问', '您是否要删除当前资源？删除当前资源会连同子资源一起删除!', function(b) {
-                if (b) {
-                    progressLoad();
-                    $.post('${path }/resource/delete', {
-                        id : node.id
-                    }, function(result) {
-                        if (result.success) {
-                            parent.$.messager.alert('提示', result.msg, 'info');
-                            resourceTreeGrid.treegrid('reload');
-//                             parent.indexMenuZTree.reAsyncChildNodes(null, "refresh");
-                        }
-                        progressClose();
-                    }, 'JSON');
-                }
-            });
-        }
-    }
+	<div id="toolbar" style="display: none;">
+		<!--  <shiro:hasPermission name="/admin/user/add"> -->
+		<a onclick="addResourceFun();" href="javascript:void(0);"
+			class="easyui-linkbutton"
+			data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
+		<!--  </shiro:hasPermission> -->
+	</div>
 
-    function addResourceFun() {
-        parent.$.modalDialog({
-            title : '添加',
-            width : 500,
-            height : 350,
-            href : '${path }/resource/addPage',
-            buttons : [ {
-                text : '添加',
-                handler : function() {
-                    parent.$.modalDialog.openner_treeGrid = resourceTreeGrid;//因为添加成功之后，需要刷新这个treeGrid，所以先预定义好
-                    var f = parent.$.modalDialog.handler.find('#resourceAddForm');
-                    f.submit();
-                }
-            } ]
-        });
-    }
-</script>
-<div class="easyui-layout" data-options="fit:true,border:false">
-    <div data-options="region:'center',border:false"  style="overflow: hidden;">
-        <table id="resourceTreeGrid"></table>
-    </div>
-</div>
-<div id="resourceToolbar" style="display: none;">
-    <shiro:hasPermission name="/resource/add">
-        <a onclick="addResourceFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
-    </shiro:hasPermission>
-</div>
+	<!-- 弹窗区 -->
+	<div id="addForm"></div>
+	<div id="editForm"></div>
+	<script type="text/javascript">
+		var userDataGrid;
+		$(function() {
+			userDataGrid = $('#datagrid').datagrid({
+				url : '${path}/admin/resource/list',
+				fit : true,
+				striped : true,
+				rownumbers : true,
+				pagination : true,
+				singleSelect : true,
+				idField : 'resourceId',
+				pageSize : 20,
+				pageList : [ 20, 30, 50, 100 ],
+				fitColumns : true,
+				// 列对象
+				columns : [ [ {
+					field : 'action',
+					title : '操作',
+					width : 200,
+					align : 'center',
+					formatter : function(value, row, index) {
+						var str = '';
+						/* <shiro:hasPermission name="/user/edit"> */
+						/*  str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId); */
+						/* </shiro:hasPermission> */
+						/* <shiro:hasPermission name="/user/delete"> */
+						/*  str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+						 str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId); */
+						/* </shiro:hasPermission> */
+						return str;
+					}
+				}, {
+					width : '120',
+					title : '资源名称',
+					align : 'center',
+					field : 'name'
+				}, {
+					width : '120',
+					title : '资源类型',
+					align : 'center',
+					field : 'type'
+				}, {
+					width : '250',
+					title : 'URL',
+					field : 'url',
+					align : 'center'
+				}, {
+					width : '100',
+					title : '顺序',
+					field : 'nodeOrder',
+					align : 'center'
+				}, {
+					width : '100',
+					title : '父级ID',
+					field : 'pid',
+					align : 'center'
+				}, {
+					width : '120',
+					title : '描述',
+					field : 'description',
+					align : 'center'
+				}, {
+					width : '100',
+					title : '是否启用',
+					field : 'isEnabled',
+					align : 'center'
+				}, {
+					width : '180',
+					title : '创建时间',
+					field : 'createTime',
+					align : 'center',
+					sortable : true
+				}, {
+					width : '100',
+					title : '创建人',
+					field : 'creator',
+					align : 'center'
+				}, {
+					width : '180',
+					title : '更新时间',
+					field : 'updateTime',
+					align : 'center',
+					sortable : true
+				}, {
+					width : '180',
+					title : '更新人',
+					field : 'updator',
+					align : 'center'
+				}, {
+					width : '180',
+					title : '备注',
+					field : 'remark',
+					align : 'center'
+				} ] ],
+				onLoadSuccess : function(data) {
+					/*   $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
+					  $('.user-easyui-linkbutton-del').linkbutton({text:'删除'}); */
+				},
+				toolbar : '#toolbar'
+			});
+		});
+
+		// 查询
+		function searchFun() {
+			console.log($.serializeObject($('#searchForm')));
+			userDataGrid.datagrid('load', $.serializeObject($('#searchForm')));
+		}
+
+		// 清空
+		function cleanFun() {
+			$('#searchForm input').val('');
+			userDataGrid.datagrid('load', {});
+		}
+
+		// 添加角色
+		function addResourceFun() {
+			$('#addForm').dialog({
+				title : '添加',
+				width : 600,
+				height : 350,
+				href : '${path}/admin/resource/addpage',
+				modal : true,
+				buttons : [ {
+					id : 'btn-save',
+					text : '确认'
+				} ]
+			});
+		}
+
+		// 编辑用户
+		function editUserFun(id) {
+			$('#editForm').dialog({
+				title : '编辑',
+				width : 600,
+				height : 350,
+				href : '${path}/admin/user/editpage/' + id,
+				modal : true,
+				buttons : [ {
+					id : 'btn-save',
+					text : '确认'
+				} ]
+			});
+		}
+
+		// 删除用户-根据用户ID
+		function deleteUserFun(id) {
+			// 加parent会锁屏
+			parent.$.messager.confirm('询问', '您是否要删除当前用户？', function(b) {
+				if (b) {
+					$$.progressLoad();
+					$
+							.ajax({
+								type : 'DELETE',
+								url : '${path }/admin/user/delete/' + id,
+								success : function(data) {
+									if (data && data.code == 0) {
+										parent.$.messager.alert('提示', data.msg,
+												'info');
+										userDataGrid.datagrid('reload');
+									} else {
+										parent.$.messager.alert('错误', data.msg,
+												'error');
+									}
+									$$.progressClose();
+								},
+								error : function(data) {
+									console.log(data);
+									alert("删除失败");
+								}
+							});
+				}
+			});
+		}
+	</script>
+</body>
+</html>

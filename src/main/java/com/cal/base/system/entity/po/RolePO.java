@@ -24,7 +24,7 @@ public class RolePO implements Serializable {
 
     private String orgId;
 
-    private Boolean isEnabled;
+    private String isEnabled;
 
     private String remark;
 
@@ -79,14 +79,14 @@ public class RolePO implements Serializable {
     }
 
     public void setOrgId(String orgId) {
-        this.orgId = orgId == null ? null : orgId.trim();
+        this.orgId = orgId;
     }
 
-    public Boolean getIsEnabled() {
+    public String getIsEnabled() {
         return isEnabled;
     }
 
-    public void setIsEnabled(Boolean isEnabled) {
+    public void setIsEnabled(String isEnabled) {
         this.isEnabled = isEnabled;
     }
 
@@ -95,7 +95,7 @@ public class RolePO implements Serializable {
     }
 
     public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
+        this.remark = remark;
     }
 
     public Date getCreateTime() {

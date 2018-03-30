@@ -13,13 +13,13 @@
 	<form id="searchForm" onsubmit="return false">
 		<table>
 			<tr>
-				<td><label for="account">账号:</label></td>
-				<td><input type="text" id="account" name="account"></td>
+				<td><label for="name">角色名称:</label></td>
+				<td><input type="text" id="name" name="name"></td>
 			</tr>
 		</table>
 		 <div class="form-button">
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="searchUserFun();">查询</a>
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="cleanUserFun();">清空</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="searchFun();">查询</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="cleanFun();">清空</a>
         </div>
 	</form>
 </div>
@@ -27,37 +27,37 @@
 
 <!-- 数据展示 begin -->
 <div class="easyui-layout" data-options="fit:true,border:false">
-    <table id="datagrid" class="easyui-datagrid" title="用户界面">
+    <table id="datagrid" class="easyui-datagrid" title="角色界面">
 	</table>
 </div>
 <!-- 数据展示 end -->
 
 <div id="toolbar" style="display: none;">
    <!--  <shiro:hasPermission name="/admin/user/add"> -->
-        <a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
+        <a onclick="addRoleFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
    <!--  </shiro:hasPermission> -->
 </div>
 
 <!-- 弹窗区 -->
 <div id="addForm"></div>
 <div id="editForm"></div>
-<div id="importForm"></div>
+<div id="grantForm"></div>
 <script type="text/javascript">
     var userDataGrid;
     $(function() {
        userDataGrid = $('#datagrid').datagrid({
-            url : '${path}/admin/user/list',
+            url : '${path}/admin/role/list',
             fit : true,
             striped : true,
             rownumbers : true,
             pagination : true,
             singleSelect : true,
-            idField : 'userId',
+            idField : 'roleId',
             pageSize : 20,
             pageList : [ 20,30,50,100],
             fitColumns: true,
-            // 固定的列
-            frozenColumns: [[{
+            // 列对象
+            columns : [ [{
                 field : 'action',
                 title : '操作',
                 width : 200,
@@ -65,37 +65,26 @@
                 formatter : function(value, row, index) {
                     var str = '';
                        /* <shiro:hasPermission name="/user/edit"> */
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
+                         	str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
+                           /*  str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId); */
                         /* </shiro:hasPermission> */
                         /* <shiro:hasPermission name="/user/delete"> */
-                            str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
-                        /* </shiro:hasPermission> */
+                          /*  str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId); */
+                       /*  /* </shiro:hasPermission> */ 
                     return str;
                 }
             },{
                 width : '120',
-                title : '账号',
+                title : '角色名称',
                 align: 'center',
-                field : 'account'
+                field : 'name'
             }, {
                 width : '120',
-                title : '姓名',
-                field : 'name',
-                align: 'center'
-            }]],
-            // 列对象
-            columns : [ [{
-                width : '150',
-                title : '手机号码',
-                field : 'phone',
-                align: 'center'
-            }, {
-                width : '60',
-                title : '性别',
-                field : 'sex',
-                align: 'center'
-            },{
+                title : '描述',
+                field : 'description',
+                align: 'center'},
+            {
                 width : '100',
                 title : '是否启用',
                 field : 'isEnabled',
@@ -129,45 +118,33 @@
                 align: 'center'
             }] ],
             onLoadSuccess:function(data){
-                $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
-                $('.user-easyui-linkbutton-del').linkbutton({text:'删除'});
+              /*   $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
+                $('.user-easyui-linkbutton-del').linkbutton({text:'删除'}); */
             },
             toolbar : '#toolbar'
         });
     });
     
     // 查询
-    function searchUserFun() {
+    function searchFun() {
     	console.log($.serializeObject($('#searchForm')));
         userDataGrid.datagrid('load', $.serializeObject($('#searchForm')));
     }
     
     // 清空
-    function cleanUserFun() {
+    function cleanFun() {
         $('#searchForm input').val('');
         userDataGrid.datagrid('load', {});
     }
     
-    // 导出
-    function exportUserFun() {
-    	// 根据查询条件导出
-    	var jsonData = $.serializeObject($('#searchForm'));
-    	window.location.href= '${path}/admin/user/export?'+$.param(jsonData)+ '&exportName=export.user';
-    }
-    
-    // 导入模板下载
-    function downloadUserTemplet() {
-    	window.location.href= '${path}/admin/user/download';
-    }
-    
-    // 批量导入
-    function batchImport() {
-    	$('#importForm').dialog({
-            title : '批量导入',
+    // 添加角色
+    function addRoleFun() {
+       $('#addForm').dialog({
+            title : '添加',
             width : 600,
             height : 350,
-            href : '${path}/admin/user/importpage',
-            modal: true,
+            href : '${path}/admin/role/addpage',
+            modal: true ,
             buttons : [{
             	id: 'btn-save',
                 text : '确认'
@@ -175,13 +152,13 @@
         });
     }
     
-    // 添加用户
-    function addUserFun() {
-       $('#addForm').dialog({
-            title : '添加',
+    // 授权
+    function grantFun(id) {
+    	$('#grantForm').dialog({
+            title : '授权',
             width : 600,
             height : 350,
-            href : '${path}/admin/user/addpage',
+            href : '${path}/admin/role/grantpage/' + id,
             modal: true ,
             buttons : [{
             	id: 'btn-save',

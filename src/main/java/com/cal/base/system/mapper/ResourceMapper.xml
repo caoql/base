@@ -36,6 +36,9 @@
 	</delete>
 	
 	<insert id="insertSelective">
+		<selectKey order="BEFORE" keyProperty="resourceId" keyColumn="RESOURCE_ID" resultType="java.lang.String">
+			SELECT REPLACE(UUID(),'-','')
+		</selectKey>
 		insert into system_resource
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="resourceId != null">
@@ -163,4 +166,65 @@
 		</set>
 		where RESOURCE_ID = #{resourceId}
 	</update>
+	
+	<!-- 资源界面数据查询展示Map -->
+	<resultMap type="com.cal.base.system.entity.dto.ResourceListDTO" id="ResourceListDtoMap">
+		<id column="RESOURCE_ID" property="resourceId" />
+		<result column="NAME" property="name" />
+		<result column="URL" property="url" />
+		<result column="TYPE" property="type" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="NODE_ORDER" property="nodeOrder" />
+		<result column="PID" property="pid" />
+		<result column="IS_ENABLED" property="isEnabled" />
+		<result column="REMARK" property="remark" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="CREATOR" property="creator" />
+		<result column="UPDATE_TIME" property="updateTime" />
+		<result column="UPDATOR" property="updator" />
+	</resultMap>
+	
+	<!--  资源界面数据查询展示 -->
+	<select id="listAll" resultMap="ResourceListDtoMap">
+		SELECT
+			resource.RESOURCE_ID,
+			resource. NAME,
+			resource.URL,
+			resource.TYPE,
+			resource.DESCRIPTION,
+			resource.NODE_ORDER,
+			resource.PID,
+			resource.IS_ENABLED,
+			resource.REMARK,
+			resource.CREATE_TIME,
+			resource.CREATOR,
+			resource.UPDATE_TIME,
+			resource.UPDATOR
+		FROM
+			system_resource resource
+			<where>
+				<if test="name != null and name != ''">
+					AND resource.NAME = #{name}
+				</if>
+				<if test="isEnabled != null and isEnabled != ''">
+					AND resource.IS_ENABLED = #{isEnabled}
+				</if>
+				<if test="type != null and type != ''">
+					AND resource.TYPE = #{type}
+				</if>
+			</where>
+		ORDER BY resource.CREATE_TIME DESC
+	</select>
+	
+	<!-- 遍历所有资源 -->
+	<select id="queryAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from system_resource
+		<where>
+			<if test="type != null and type != ''">
+				AND resource.TYPE = #{type}
+			</if>
+		</where>
+	</select>
 </mapper>

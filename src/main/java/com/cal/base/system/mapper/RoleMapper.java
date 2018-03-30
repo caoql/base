@@ -3,7 +3,9 @@ package com.cal.base.system.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.cal.base.system.entity.dto.RoleListDTO;
 import com.cal.base.system.entity.po.RolePO;
+import com.cal.base.system.entity.query.RoleParam;
 
 /**
  * 角色Mapper,主要操作system_role表
@@ -26,4 +28,10 @@ public interface RoleMapper {
 
     // 根据角色ID获取资源列表
 	List<Map<Object, String>> selectResourceListByRoleId(String roleId);
+
+	// 角色界面数据展示
+	List<RoleListDTO> listAll(RoleParam param);
+
+	// 根据角色ID查资源ID
+	List<String> selectResourceIdListByRoleId(String id);
 }

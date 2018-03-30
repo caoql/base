@@ -1,11 +1,24 @@
 package com.cal.base.system.controller;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cal.base.common.exception.CommonException;
+import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.system.entity.query.RoleParam;
+import com.cal.base.system.entity.vo.RoleVO;
 import com.cal.base.system.service.RoleService;
 
 /**
@@ -35,140 +48,79 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * 权限列表
-     *
-     * @param page
-     * @param rows
-     * @param sort
-     * @param order
+     * 角色界面数据展示
+     * @param param
      * @return
-     *//*
-    @PostMapping("/dataGrid")
-    @ResponseBody
-    public DataGridResult dataGrid(Integer page, Integer rows, String sort, String order) {
-    	//MyBatis 分页插件
-        //不进行count查询，第三个参数设为false 默认第三个参数为true  //PageHelper.startPage(1, 10, false);
-        PageHelper.startPage(page, rows); 
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<RolePO> roleList=roleService.queryAll(map);
-        PageInfo<RolePO> pageInfo = new PageInfo<RolePO>(roleList);
-        //分页渲染实体类的构建
-        DataGridResult jqueryPageInfo=new DataGridResult();
-        jqueryPageInfo.setTotal(pageInfo.getTotal());
-        jqueryPageInfo.setRows(pageInfo.getList());
-        return jqueryPageInfo;
-    }
-
-    *//**
-     * 权限树
+     */
+    @PostMapping("/list")
+	@ResponseBody
+	public ResponsePageInfo list(RoleParam param) {
+		return roleService.listAll(param);
+	}
+    
+    /**
+     * 角色新增页面展示
      * @return
-     *//*
-    @PostMapping("/tree")
-    @ResponseBody
-    public Object tree() {
-        return roleService.selectTree();
-    }
-
-    *//**
-     * 添加权限页
+     */
+    @GetMapping("/addpage")
+	public String showAddPage() {
+		return "admin/role/roleAdd";
+	}
+    
+    /**
+     * 角色新增数据保存
+     * @param addVo
+     * @param result
      * @return
-     *//*
-    @GetMapping("/addPage")
-    public String addPage() {
-        return "admin/role/roleAdd";
-    }
-
-    *//**
-     * 添加权限
-     * @param role
-     * @return
-     *//*
+     */
     @PostMapping("/add")
-    @ResponseBody
-    public Object add(RolePO role) {
-        roleService.insert(role);
-        return renderSuccess("添加成功！");
-    }
-
-    *//**
-     * 删除权限
-     *
-     * @param id
-     * @return
-     *//*
-    @RequestMapping("/delete")
-    @ResponseBody
-    public Object delete(Long id) {
-        roleService.deleteByPrimaryKey(id);
-        return renderSuccess("删除成功！");
-    }
-
-    *//**
-     * 编辑权限页
-     *
+	@ResponseBody
+	public Object saveRole(@Validated RoleVO addVo, BindingResult result) {
+		// 框架层面的校验
+		if (result.hasErrors()) {
+			List<ObjectError> allErrors = result.getAllErrors();
+			StringBuffer sb = new StringBuffer();
+			for (ObjectError error : allErrors) {
+				sb.append(error.getDefaultMessage() + ", ");
+			}
+			throw new CommonException(sb.toString());
+		}
+		boolean flag = roleService.saveRole(addVo);
+		if (!flag) {
+			return renderError("添加失败！");
+		}
+		return renderSuccess("添加成功！");
+	}
+    
+    /**
+     * 授权页跳转
      * @param model
      * @param id
      * @return
-     *//*
-    @RequestMapping("/editPage")
-    public String editPage(Model model, Long id) {
-        RolePO role = roleService.selectByPrimaryKey(id);
-        model.addAttribute("role", role);
-        return "admin/role/roleEdit";
-    }
-
-    *//**
-     * 删除权限
-     *
-     * @param role
-     * @return
-     *//*
-    @RequestMapping("/edit")
-    @ResponseBody
-    public Object edit( RolePO role) {
-        roleService.updateByPrimaryKeySelective(role);
-        return renderSuccess("编辑成功！");
-    }
-
-    *//**
-     * 授权页面
-     *
-     * @param id
-     * @param model
-     * @return
-     *//*
-    @GetMapping("/grantPage")
-    public String grantPage(Model model, Long id) {
-        model.addAttribute("id", id);
-        return "admin/role/roleGrant";
-    }
-
-    *//**
+     */
+	@GetMapping("/grantpage/{id}")
+	public String grantpage(Model model, @PathVariable String id) {
+		model.addAttribute("id", id);
+		return "admin/role/roleGrant";
+	}
+	
+	 /**
      * 授权页面页面根据角色查询资源
      *
      * @param id
      * @return
-     *//*
+     */
     @RequestMapping("/findResourceIdListByRoleId")
     @ResponseBody
-    public Object findResourceByRoleId(Long id) {
-        List<Long> resources = roleService.selectResourceIdListByRoleId(id);
+    public Object findResourceByRoleId(String id) {
+        List<String> resources = roleService.selectResourceIdListByRoleId(id);
         return renderSuccess(resources);
     }
-
-    *//**
-     * 授权
-     *
-     * @param id
-     * @param resourceIds
-     * @return
-     *//*
-    @RequiresRoles("admin")
+    
     @RequestMapping("/grant")
     @ResponseBody
-    public Object grant(Long id, String resourceIds) {
+    public Object grant(String id, String resourceIds) {
         roleService.updateRoleResource(id, resourceIds);
         return renderSuccess("授权成功！");
     }
-*/
 }
