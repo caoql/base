@@ -2,6 +2,7 @@ package com.cal.base.system.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,13 @@ import com.cal.base.common.excel.ExcelUtil;
 import com.cal.base.common.excel.ExcelUtil2;
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.exception.ServiceException;
+import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponseInfo;
 import com.cal.base.common.info.ResponsePageInfo;
 import com.cal.base.common.util.file.FileUtil;
 import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.common.util.page.PageUtil;
+import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.dto.UserListDTO;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
@@ -69,6 +72,13 @@ public class UserServiceImpl implements IUserService {
 	public boolean insertUser(UserVO addVo) {
 		// 校验？
 		UserPO record = addVo.toUserPO();
+		// 跟踪信息-record不会是null
+		CurrentUserInfo redisUser = WebUtil.getRedisUser();
+		if (redisUser != null) {
+			record.setCreator(redisUser.getAccount());
+		}
+		record.setCreateTime(new Date());
+		
 		int result = userMapper.insertSelective(record);
 		logger.debug("插入的生成的用户id是" + record.getUserId());
 		if (result > 0) {

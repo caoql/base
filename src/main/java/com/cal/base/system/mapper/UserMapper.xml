@@ -22,6 +22,7 @@
 		<result column="CREATOR" property="creator" />
 		<result column="UPDATE_TIME" property="updateTime" />
 		<result column="UPDATOR" property="updator" />
+		<result column="SALT" property="salt" />
 	</resultMap>
 
 	<!-- 界面数据展示map定义 -->
@@ -83,7 +84,7 @@
 		SEX, SYSCODE,
 		ORG_ID, IS_ENABLED, REMARK,
 		CREATE_TIME, CREATOR,
-		UPDATE_TIME, UPDATOR
+		UPDATE_TIME, UPDATOR,SALT
 	</sql>
 
 	<!-- 使用resultMap进行输出映射 resultMap：指定定义的resultMap的id，如果这个resultMap在其它的mapper文件中，前边需要加namespace -->

@@ -27,7 +27,7 @@
 
 <!-- 数据展示 begin -->
 <div class="easyui-layout" data-options="fit:true,border:false">
-    <table id="datagrid" class="easyui-datagrid" title="用户界面" style="width:700px;height:250px">
+    <table id="datagrid" class="easyui-datagrid" title="用户界面">
 	</table>
 </div>
 <!-- 数据展示 end -->

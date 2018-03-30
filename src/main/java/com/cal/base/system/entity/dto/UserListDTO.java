@@ -2,6 +2,7 @@ package com.cal.base.system.entity.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import com.cal.base.common.reflect.ObjReflect;
 import com.cal.base.system.entity.po.RolePO;
@@ -85,12 +86,11 @@ public class UserListDTO implements Serializable {
 	}
 
 	public String getSex() {
-		switch (sex) {
-		case "m":
+		if (Objects.equals("m", sex)) {
 			return "男";
-		case "w":
+		} else if (Objects.equals("w", sex)) {
 			return "女";
-		default:
+		} else {
 			return sex;
 		}
 	}
@@ -100,14 +100,13 @@ public class UserListDTO implements Serializable {
 	}
 
 	public String getIsEnabled() {
-		 switch (isEnabled) {
-         case "1":
-             return "正常";
-         case "0":
-             return "停用";
-         default :	
-         	return isEnabled;
-         }
+		if (Objects.equals("1", isEnabled)) {
+			return "男";
+		} else if (Objects.equals("0", isEnabled)) {
+			return "女";
+		} else {
+			return isEnabled;
+		}
 	}
 
 	public void setIsEnabled(String isEnabled) {

@@ -88,7 +88,7 @@ public class UserController extends BaseController {
 	 */
 	@PostMapping("/add")
 	@ResponseBody
-	public Object insertUser(@Validated UserVO addVo, BindingResult result) {
+	public Object insertUser(HttpServletRequest request, @Validated UserVO addVo, BindingResult result) {
 		logger.debug("POST请求添加的用户数据是:" + addVo);
 		// 框架层面的校验
 		if (result.hasErrors()) {

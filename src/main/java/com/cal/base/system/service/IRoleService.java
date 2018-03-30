@@ -5,6 +5,6 @@ import java.util.Set;
 
 public interface IRoleService {
 
-	Map<String, Set<String>> selectResourceMapByUserId(Long userId);
+	Map<String, Set<String>> selectResourceMapByUserId(String userId);
 
 }

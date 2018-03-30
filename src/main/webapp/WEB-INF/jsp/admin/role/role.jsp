@@ -1,175 +1,236 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%-- 引入通用的JSP处理 --%>
 <%@ include file="../../common/global.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<%@ include file="../../common/base.jsp" %>
+<title>角色管理界面</title>
+</head>
+<body>
+<!-- 查询条件展示区域  begin-->
+<div>
+	<form id="searchForm" onsubmit="return false">
+		<table>
+			<tr>
+				<td><label for="account">账号:</label></td>
+				<td><input type="text" id="account" name="account"></td>
+			</tr>
+		</table>
+		 <div class="form-button">
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="searchUserFun();">查询</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="cleanUserFun();">清空</a>
+        </div>
+	</form>
+</div>
+<!-- 查询条件展示区域  end-->
+
+<!-- 数据展示 begin -->
+<div class="easyui-layout" data-options="fit:true,border:false">
+    <table id="datagrid" class="easyui-datagrid" title="用户界面">
+	</table>
+</div>
+<!-- 数据展示 end -->
+
+<div id="toolbar" style="display: none;">
+   <!--  <shiro:hasPermission name="/admin/user/add"> -->
+        <a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
+   <!--  </shiro:hasPermission> -->
+</div>
+
+<!-- 弹窗区 -->
+<div id="addForm"></div>
+<div id="editForm"></div>
+<div id="importForm"></div>
 <script type="text/javascript">
-    var roleDataGrid;
+    var userDataGrid;
     $(function() {
-        roleDataGrid = $('#roleDataGrid').datagrid({
-            url : '${path }/role/dataGrid',
+       userDataGrid = $('#datagrid').datagrid({
+            url : '${path}/admin/user/list',
+            fit : true,
             striped : true,
             rownumbers : true,
             pagination : true,
             singleSelect : true,
-            idField : 'id',
-            sortName : 'id',
-            sortOrder : 'asc',
+            idField : 'userId',
             pageSize : 20,
-            pageList : [ 10, 20, 30, 40, 50, 100, 200, 300, 400, 500 ],
-            frozenColumns : [ [ {
-                width : '100',
-                title : '编号id',
-                field : 'id',
-                sortable : true,
-                hidden : true
-            }, {
-                width : '160',
-                title : '名称',
-                field : 'name',
-                sortable : true
-            } , {
-                width : '80',
-                title : '排序号',
-                field : 'seq',
-                sortable : true
-            }, {
-                width : '200',
-                title : '描述',
-                field : 'description'
-            } , {
-                width : '60',
-                title : '状态',
-                field : 'status',
-                sortable : true,
-                formatter : function(value, row, index) {
-                    switch (value) {
-                    case 0:
-                        return '正常';
-                    case 1:
-                        return '停用';
-                    }
-                }
-            }, {
+            pageList : [ 20,30,50,100],
+            fitColumns: true,
+            // 固定的列
+            frozenColumns: [[{
                 field : 'action',
                 title : '操作',
-                width : 300,
+                width : 200,
+                align : 'center',
                 formatter : function(value, row, index) {
                     var str = '';
-                        <shiro:hasPermission name="/role/grant">
-                            str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-ok" data-options="plain:true,iconCls:\'fi-check icon-green\'" onclick="grantRoleFun(\'{0}\');" >授权</a>', row.id);
-                        </shiro:hasPermission>
-                        <shiro:hasPermission name="/role/edit">
+                       /* <shiro:hasPermission name="/user/edit"> */
+                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
+                        /* </shiro:hasPermission> */
+                        /* <shiro:hasPermission name="/user/delete"> */
                             str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editRoleFun(\'{0}\');" >编辑</a>', row.id);
-                        </shiro:hasPermission>
-                        <shiro:hasPermission name="/role/delete">
-                            str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteRoleFun(\'{0}\');" >删除</a>', row.id);
-                        </shiro:hasPermission>
+                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
+                        /* </shiro:hasPermission> */
                     return str;
                 }
-            } ] ],
+            },{
+                width : '120',
+                title : '账号',
+                align: 'center',
+                field : 'account'
+            }, {
+                width : '120',
+                title : '姓名',
+                field : 'name',
+                align: 'center'
+            }]],
+            // 列对象
+            columns : [ [{
+                width : '150',
+                title : '手机号码',
+                field : 'phone',
+                align: 'center'
+            }, {
+                width : '60',
+                title : '性别',
+                field : 'sex',
+                align: 'center'
+            },{
+                width : '100',
+                title : '是否启用',
+                field : 'isEnabled',
+                align: 'center'
+            },{
+                width : '180',
+                title : '创建时间',
+                field : 'createTime',
+                align: 'center',
+                sortable : true
+            },{
+                width : '100',
+                title : '创建人',
+                field : 'creator',
+                align: 'center'
+            }, {
+                width : '180',
+                title : '更新时间',
+                field : 'updateTime',
+                align: 'center',
+                sortable : true
+            }, {
+                width : '180',
+                title : '更新人',
+                field : 'updator',
+                align: 'center'
+            }, {
+                width : '180',
+                title : '备注',
+                field : 'remark',
+                align: 'center'
+            }] ],
             onLoadSuccess:function(data){
-                $('.role-easyui-linkbutton-ok').linkbutton({text:'授权'});
-                $('.role-easyui-linkbutton-edit').linkbutton({text:'编辑'});
-                $('.role-easyui-linkbutton-del').linkbutton({text:'删除'});
+                $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
+                $('.user-easyui-linkbutton-del').linkbutton({text:'删除'});
             },
-            toolbar : '#roleToolbar'
+            toolbar : '#toolbar'
         });
     });
-
-    function addRoleFun() {
-        parent.$.modalDialog({
+    
+    // 查询
+    function searchUserFun() {
+    	console.log($.serializeObject($('#searchForm')));
+        userDataGrid.datagrid('load', $.serializeObject($('#searchForm')));
+    }
+    
+    // 清空
+    function cleanUserFun() {
+        $('#searchForm input').val('');
+        userDataGrid.datagrid('load', {});
+    }
+    
+    // 导出
+    function exportUserFun() {
+    	// 根据查询条件导出
+    	var jsonData = $.serializeObject($('#searchForm'));
+    	window.location.href= '${path}/admin/user/export?'+$.param(jsonData)+ '&exportName=export.user';
+    }
+    
+    // 导入模板下载
+    function downloadUserTemplet() {
+    	window.location.href= '${path}/admin/user/download';
+    }
+    
+    // 批量导入
+    function batchImport() {
+    	$('#importForm').dialog({
+            title : '批量导入',
+            width : 600,
+            height : 350,
+            href : '${path}/admin/user/importpage',
+            modal: true,
+            buttons : [{
+            	id: 'btn-save',
+                text : '确认'
+            }]
+        });
+    }
+    
+    // 添加用户
+    function addUserFun() {
+       $('#addForm').dialog({
             title : '添加',
-            width : 500,
+            width : 600,
             height : 350,
-            href : '${path }/role/addPage',
-            buttons : [ {
-                text : '确定',
-                handler : function() {
-                    parent.$.modalDialog.openner_dataGrid = roleDataGrid;//因为添加成功之后，需要刷新这个treeGrid，所以先预定义好
-                    var f = parent.$.modalDialog.handler.find('#roleAddForm');
-                    f.submit();
-                }
-            } ]
+            href : '${path}/admin/user/addpage',
+            modal: true ,
+            buttons : [{
+            	id: 'btn-save',
+                text : '确认'
+            }]
         });
     }
-
-    function editRoleFun(id) {
-        if (id == undefined) {
-            var rows = roleDataGrid.datagrid('getSelections');
-            id = rows[0].id;
-        } else {
-            roleDataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-        }
-        parent.$.modalDialog({
+    
+    // 编辑用户
+    function editUserFun(id) {
+    	$('#editForm').dialog({
             title : '编辑',
-            width : 500,
+            width : 600,
             height : 350,
-            href : '${path }/role/editPage?id=' + id,
-            buttons : [ {
-                text : '确定',
-                handler : function() {
-                    parent.$.modalDialog.openner_dataGrid = roleDataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
-                    var f = parent.$.modalDialog.handler.find('#roleEditForm');
-                    f.submit();
-                }
-            } ]
+            href : '${path}/admin/user/editpage/' + id,
+            modal: true ,
+            buttons : [{
+            	id: 'btn-save',
+                text : '确认'
+            }]
         });
     }
-
-    function deleteRoleFun(id) {
-        if (id == undefined) {//点击右键菜单才会触发这个
-            var rows = roleDataGrid.datagrid('getSelections');
-            id = rows[0].id;
-        } else {//点击操作里面的删除图标会触发这个
-            roleDataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-        }
-        parent.$.messager.confirm('询问', '您是否要删除当前角色？', function(b) {
+ 
+    // 删除用户-根据用户ID
+    function deleteUserFun(id) {
+        // 加parent会锁屏
+        parent.$.messager.confirm('询问', '您是否要删除当前用户？', function(b) {
             if (b) {
-                progressLoad();
-                $.post('${path }/role/delete', {
-                    id : id
-                }, function(result) {
-                    if (result.success) {
-                        parent.$.messager.alert('提示', result.msg, 'info');
-                        roleDataGrid.datagrid('reload');
-                    }
-                    progressClose();
-                }, 'JSON');
+            	$$.progressLoad();
+            	$.ajax({
+            		type: 'DELETE',
+            		url: '${path }/admin/user/delete/' + id,
+            		success: function (data) {
+            			if (data && data.code == 0) {
+                            parent.$.messager.alert('提示', data.msg, 'info');
+                            userDataGrid.datagrid('reload');
+                        } else {
+                            parent.$.messager.alert('错误', data.msg, 'error');
+                        }
+                        $$.progressClose();
+            		},
+					error: function(data) {
+						console.log(data);
+						alert("删除失败");
+					}
+            	});
             }
         });
     }
-
-    function grantRoleFun(id) {
-        if (id == undefined) {
-            var rows = roleDataGrid.datagrid('getSelections');
-            id = rows[0].id;
-        } else {
-            roleDataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-        }
-        
-        parent.$.modalDialog({
-            title : '授权',
-            width : 500,
-            height : 500,
-            href : '${path }/role/grantPage?id=' + id,
-            buttons : [ {
-                text : '确定',
-                handler : function() {
-                    parent.$.modalDialog.openner_dataGrid = roleDataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
-                    var f = parent.$.modalDialog.handler.find('#roleGrantForm');
-                    f.submit();
-                }
-            } ]
-        });
-    }
 </script>
-<div class="easyui-layout" data-options="fit:true,border:false">
-    <div data-options="region:'center',fit:true,border:false">
-        <table id="roleDataGrid" data-options="fit:true,border:false"></table>
-    </div>
-</div>
-<div id="roleToolbar" style="display: none;">
-    <shiro:hasPermission name="/role/add">
-        <a onclick="addRoleFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
-    </shiro:hasPermission>
-</div>
+</body>
+</html>

@@ -30,7 +30,7 @@ public class CurrentUserInfo implements Serializable {
 	/**
 	 * 用户名
 	 */
-	private String username;
+	private String name;
 	
 	/**
 	 * 当前时间
@@ -68,12 +68,12 @@ public class CurrentUserInfo implements Serializable {
 		this.account = account;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getNowTime() {

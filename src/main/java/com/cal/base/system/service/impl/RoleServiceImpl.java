@@ -38,7 +38,7 @@ public class RoleServiceImpl implements IRoleService {
 
 	// 获得角色和资源列表
 	@Override
-	public Map<String, Set<String>> selectResourceMapByUserId(Long userId) {
+	public Map<String, Set<String>> selectResourceMapByUserId(String userId) {
 		Map<String, Set<String>> resourceMap = new HashMap<String, Set<String>>();
 		List<String> roleIdList = userRoleMapper.selectRoleIdListByUserId(userId);
 		Set<String> urlSet = new HashSet<String>();

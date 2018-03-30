@@ -1,13 +1,18 @@
 package com.cal.base.common.shiro;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.CacheManager;
@@ -23,7 +28,10 @@ import com.cal.base.system.service.IRoleService;
 import com.cal.base.system.service.IUserService;
 
 /**
- * @description：shiro权限认证
+ * @description Realm：可以有1个或多个Realm，可以认为是安全实体数据源，即用于获取安全实体的；
+ *              可以是JDBC实现，也可以是LDAP实现
+ *              ，或者内存实现等等；由用户提供；注意：Shiro不知道你的用户/权限存储在哪及以何种格式存储；
+ *              所以我们一般在应用中都需要实现自己的Realm；
  * @author：andyC 2018-3-15
  */
 public class ShiroDbRealm extends AuthorizingRealm {
@@ -39,12 +47,12 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Autowired
 	private IRoleService roleService;
 
-	public ShiroDbRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
-		super(cacheManager, matcher);
+	public ShiroDbRealm(CacheManager cacheManager) {
+		super(cacheManager);
 	}
-	
-	public ShiroDbRealm( CredentialsMatcher matcher) {
-		super(matcher);
+
+	public ShiroDbRealm() {
+		super();
 	}
 
 	/**
@@ -59,32 +67,28 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		List<UserPO> list = userService.selectByLoginName(token.getUsername());
 		// 账号不存在
 		if (list == null || list.isEmpty()) {
-			return null;
+			throw new UnknownAccountException();
 		}
+		// 默认取第一个用户的信息对比
 		UserPO user = list.get(0);
 		// 账号未启用
-		/*if (user.getIsEnabled()) {
-			return null;
-		}*/
+		if (user.getIsEnabled() != 1) {
+			throw new DisabledAccountException();
+		}
 		// 密码不相等
-		if (!token.getPassword().equals(user.getPassword())) {
-			return null;
+		if (!Objects
+				.equals(new String(token.getPassword()), user.getPassword())) {
+			throw new IncorrectCredentialsException();
 		}
 		// 读取用户的url和角色
-		/*Map<String, Set<String>> resourceMap = roleService
+		Map<String, Set<String>> resourceMap = roleService
 				.selectResourceMapByUserId(user.getUserId());
 		Set<String> urls = resourceMap.get("urls");
 		Set<String> roles = resourceMap.get("roles");
 		ShiroUser shiroUser = new ShiroUser(user.getUserId(),
 				user.getAccount(), user.getName(), urls);
-		shiroUser.setRoles(roles);
-		// 认证缓存信息
-		return new SimpleAuthenticationInfo(shiroUser, user.getPassword()
-				.toCharArray(), ShiroByteSource.of(user.getSalt()), getName());*/
-		ShiroUser shiroUser = new ShiroUser(user.getUserId(),
-				user.getAccount(), user.getName(), null);
-		return new SimpleAuthenticationInfo(shiroUser, user.getPassword()
-				.toCharArray(), ShiroByteSource.of(user.getSalt()), getName());
+		shiroUser.setRoles(roles); // 认证缓存信息 
+		return new SimpleAuthenticationInfo(shiroUser, user.getPassword().toCharArray(), getName());
 	}
 
 	/**

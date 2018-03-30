@@ -19,5 +19,5 @@ public interface UserRoleMapper {
     int updateByPrimaryKeySelective(UserRolePO record);
 
     // 根据用户ID获取角色ID列表
-	List<String> selectRoleIdListByUserId(Long userId);
+	List<String> selectRoleIdListByUserId(String userId);
 }
