@@ -1,6 +1,8 @@
 package com.cal.base.system.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,7 +28,9 @@ import com.cal.base.common.util.file.FileUtil;
 import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
+import com.cal.base.system.entity.vo.UserRoleVO;
 import com.cal.base.system.entity.vo.UserVO;
+import com.cal.base.system.service.RoleService;
 import com.cal.base.system.service.UserService;
 
 /**
@@ -43,6 +48,10 @@ public class UserController extends BaseController {
 	// 注入用戶Service
 	@Autowired
 	private UserService userService;
+	
+	// 注入角色Service
+	@Autowired
+	private RoleService roleService;
 
 	/**
 	 * 用戶管理页
@@ -110,6 +119,58 @@ public class UserController extends BaseController {
 		}
 		return renderSuccess("添加成功！");
 	}
+	
+	/**
+	 * 绑定角色跳转页
+	 * @param model
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/bindpage/{id}")
+	public String bindPage(Model model, @PathVariable String id) {
+		List<Map<String, Object>> rolelist = roleService.queryUserRoleByUserId(id);
+		model.addAttribute("id", id);
+		model.addAttribute("rolelist", rolelist);
+		return "admin/user/userBindRole";
+	}
+	
+	/**
+	 * 返回角色绑定列表
+	 * @param text
+	 * @return
+	 */
+	@PostMapping("/searchrole")
+	@ResponseBody
+	public Object searchrole() {
+		Map<String, Object> param = new HashMap<String, Object>();
+		return roleService.queryUserRole(param);
+	}
+
+	/**
+	 * 绑定角色
+	 * @param vo
+	 * @param result
+	 * @return
+	 */
+	@PostMapping("/bindrole")
+	@ResponseBody
+	public Object bindrole(@RequestBody @Validated UserRoleVO vo, BindingResult result) {
+		logger.debug("post请求绑定的角色信息是:" + vo);
+		// 框架层面的校验
+		if (result.hasErrors()) {
+			List<ObjectError> allErrors = result.getAllErrors();
+			StringBuffer sb = new StringBuffer();
+			for (ObjectError error : allErrors) {
+				sb.append(error.getDefaultMessage() + ", ");
+			}
+			throw new CommonException(sb.toString());
+		}
+		boolean flag = userService.bindrole(vo);
+		if (!flag) {
+			return renderError("绑定失败！");
+		}
+		return renderSuccess("绑定成功！");
+	}
 
 	/**
 	 * 编辑用户页
@@ -124,9 +185,9 @@ public class UserController extends BaseController {
 		model.addAttribute("user", user);
 		return "admin/user/userEdit";
 	}
-
+	
 	/**
-	 * 
+	 * 编辑用户
 	 * @param editVo
 	 * @param result
 	 * @return
@@ -135,7 +196,7 @@ public class UserController extends BaseController {
 	@PostMapping("/edit")
 	@ResponseBody
 	public Object updateUser(@Validated UserVO editVo, BindingResult result) {
-		logger.debug("put请求编辑的用户数据是:" + editVo);
+		logger.debug("post请求编辑的用户数据是:" + editVo);
 		// 框架层面的校验
 		if (result.hasErrors()) {
 			List<ObjectError> allErrors = result.getAllErrors();

@@ -31,9 +31,12 @@ import com.cal.base.common.util.page.PageUtil;
 import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.dto.UserListDTO;
 import com.cal.base.system.entity.po.UserPO;
+import com.cal.base.system.entity.po.UserRolePO;
 import com.cal.base.system.entity.query.UserParam;
+import com.cal.base.system.entity.vo.UserRoleVO;
 import com.cal.base.system.entity.vo.UserVO;
 import com.cal.base.system.mapper.UserMapper;
+import com.cal.base.system.mapper.UserRoleMapper;
 
 @Service
 public class UserService {
@@ -45,6 +48,9 @@ public class UserService {
 	@Autowired
 	private UserMapper userMapper;
 
+	@Autowired
+	private UserRoleMapper userRoleMapper;
+	
 	/**
 	 * 用户管理列表数据展示
 	 */
@@ -266,6 +272,25 @@ public class UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Transactional
+	public boolean bindrole(UserRoleVO vo) {
+		if (vo == null || StringUtils.isBlank(vo.getUserId()) || vo.getRoleIds() == null) {
+			throw new ServiceException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		String userId = vo.getUserId();
+		// 先删后增
+		userRoleMapper.deleteByUserId(userId);
+		
+		List<String> roleIds = vo.getRoleIds();
+		for (String roleId : roleIds) {
+			UserRolePO record = new UserRolePO();
+			record.setUserId(userId);
+			record.setRoleId(roleId);
+			userRoleMapper.insertSelective(record);
+		}
+		return true;
 	}
 
 }

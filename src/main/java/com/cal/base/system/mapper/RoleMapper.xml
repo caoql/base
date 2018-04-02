@@ -232,4 +232,16 @@
 		WHERE
 			sr.ROLE_ID = #{value}
 	</select>
+	
+	<!-- 获取角色信息 -->
+	<select id="selectRoleInfo" resultType="java.util.Map">
+		SELECT
+			SR.ROLE_ID AS id,
+			SR. NAME AS text
+		FROM SYSTEM_ROLE SR
+		WHERE SR.IS_ENABLED = 1
+		<if test="text != null and text != ''">
+			AND SR. NAME LIKE '%' ||  #{text} || '%'
+		</if>
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.cal.base.system.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cal.base.system.entity.po.UserRolePO;
 
@@ -20,4 +21,10 @@ public interface UserRoleMapper {
 
     // 根据用户ID获取角色ID列表
 	List<String> selectRoleIdListByUserId(String userId);
+	
+	// 根据用户ID删除角色绑定
+	int deleteByUserId(String userId);
+
+	// 根据用户ID获取角色信息
+	List<Map<String, Object>> queryUserRoleByUserId(String userId);
 }

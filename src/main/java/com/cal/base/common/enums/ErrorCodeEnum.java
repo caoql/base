@@ -22,7 +22,9 @@ public enum ErrorCodeEnum {
     // 数据库相关错误定义以8开头
 	DB_INSERT_ERROR(8010, "数据库插入数据失败"),
 	DB_UPDATE_ERROR(8020, "数据库更新数据失败"),
-	DB_DELETE_ERROR(8030, "数据库删除数据失败");
+	DB_DELETE_ERROR(8030, "数据库删除数据失败"),
+	
+	PARAM_IS_NULL(1000,"参数为空");
 	
     /**
      * 错误码

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cal.base.common.enums.ErrorCodeEnum;
+import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponsePageInfo;
 import com.cal.base.common.util.page.PageUtil;
@@ -135,6 +136,19 @@ public class RoleService {
 			roleResource.setResourceId(resourceId);
 			roleResourceMapper.insertSelective(roleResource);
 		}
+	}
+	
+	
+	public List<Map<String,Object>> queryUserRole(Map<String,Object> param) {
+		return roleMapper.selectRoleInfo(param);
+	}
+
+	// 根据用户ID获取角色信息
+	public List<Map<String, Object>> queryUserRoleByUserId(String userId) {
+		if (StringUtils.isBlank(userId)) {
+			throw new CommonException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		return userRoleMapper.queryUserRoleByUserId(userId);
 	}
 
 }

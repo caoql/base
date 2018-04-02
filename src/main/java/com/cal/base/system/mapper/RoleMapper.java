@@ -34,4 +34,7 @@ public interface RoleMapper {
 
 	// 根据角色ID查资源ID
 	List<String> selectResourceIdListByRoleId(String id);
+
+	// 获取角色数据
+	List<Map<String, Object>> selectRoleInfo(Map<String, Object> param);
 }

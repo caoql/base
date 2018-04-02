@@ -26,13 +26,32 @@
 		where USER_ID = #{value}
 	</select>
 	
-
+	<!-- 根据用户ID获取角色信息 -->
+	<select id="queryUserRoleByUserId" resultType="java.util.Map">
+		SELECT
+			SR.ROLE_ID AS id,
+			SR. NAME AS text
+		FROM
+			SYSTEM_USER_ROLE SUR
+		INNER JOIN SYSTEM_ROLE SR ON SUR.ROLE_ID = SR.ROLE_ID
+		WHERE SUR.USER_ID = #{userId}
+	</select>
+	
 	<delete id="deleteByPrimaryKey">
 		delete from system_user_role
 		where ID = #{id}
 	</delete>
+	
+	<!-- 根据用户ID删除角色绑定 -->
+	<delete id="deleteByUserId">
+		delete from system_user_role
+		where USER_ID = #{value}
+	</delete>
 
 	<insert id="insertSelective">
+		<selectKey keyColumn="ID" keyProperty="id" order="BEFORE" resultType="java.lang.String"> 
+			SELECT REPLACE(UUID(),'-','')
+		</selectKey>
 		insert into system_user_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">

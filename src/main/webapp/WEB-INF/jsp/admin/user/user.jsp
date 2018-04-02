@@ -45,6 +45,7 @@
 <div id="addForm"></div>
 <div id="editForm"></div>
 <div id="importForm"></div>
+<div id="bindForm"></div>
 <script type="text/javascript">
     var userDataGrid;
     $(function() {
@@ -63,11 +64,13 @@
             frozenColumns: [[{
                 field : 'action',
                 title : '操作',
-                width : 200,
+                width : 250,
                 align : 'center',
                 formatter : function(value, row, index) {
                     var str = '';
                        /* <shiro:hasPermission name="/user/edit"> */
+                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="bindRoleFun(\'{0}\');" >绑定角色</a>', row.userId);
+                        	str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
                             str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
                         /* </shiro:hasPermission> */
                         /* <shiro:hasPermission name="/user/delete"> */
@@ -192,6 +195,22 @@
             }]
         });
     }
+    
+    // 绑定角色
+    function bindRoleFun(id) {
+    	$('#bindForm').dialog({
+            title : '绑定角色',
+            width : 600,
+            height : 350,
+            href : '${path}/admin/user/bindpage/' + id,
+            modal: true ,
+            buttons : [{
+            	id: 'btn-save',
+                text : '确认'
+            }]
+        });
+    }
+    
     
     // 编辑用户
     function editUserFun(id) {
