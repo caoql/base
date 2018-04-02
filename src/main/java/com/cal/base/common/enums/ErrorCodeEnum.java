@@ -8,6 +8,7 @@ package com.cal.base.common.enums;
 public enum ErrorCodeEnum {
 	CALL_SUCCESS(0, "操作成功"), 
     CALL_ERROR(9999, "系统异常，请稍后重试..."),
+    CURRENT_USER_IS_NULL(1110, "用户没有登录"),    
     CALL_VALIDATE_ERROR(1111, "参数校验失败"),
     
     //通用异常定义
@@ -25,6 +26,7 @@ public enum ErrorCodeEnum {
 	DB_DELETE_ERROR(8030, "数据库删除数据失败"),
 	
 	PARAM_IS_NULL(1000,"参数为空");
+	
 	
     /**
      * 错误码

@@ -23,7 +23,7 @@
 					if (data != null) {
 						if (data.code == 0) {
 							$('#addForm').dialog('close');
-							$$.refreshDatagrid('datagrid');
+							$$.refreshTreegrid('resourceTreeGrid');
 						} else {
 							$.messager.alert('提示信息', data.msg, 'error');
 						}

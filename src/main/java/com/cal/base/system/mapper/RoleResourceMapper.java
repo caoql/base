@@ -1,5 +1,7 @@
 package com.cal.base.system.mapper;
 
+import java.util.List;
+
 import com.cal.base.system.entity.po.RoleResourcePO;
 
 /**
@@ -18,4 +20,7 @@ public interface RoleResourceMapper {
 
     // 通过角色ID删除资源
 	int deleteByRoleId(String roleId);
+
+	// 通过资源ID查询数据总数
+	int selectPosByIds(List<String> ids);
 }

@@ -31,5 +31,5 @@ public interface UserMapper {
 	List<UserPO> selectByLoginName(String username);
 
 	// 通过用户信息获取资源列表
-	List<Map<String, Object>> getResources(Long userId);
+	List<Map<String, Object>> getResources(String userId);
 }

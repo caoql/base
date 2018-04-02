@@ -33,9 +33,9 @@
 <!-- 数据展示 end -->
 
 <div id="toolbar" style="display: none;">
-   <!--  <shiro:hasPermission name="/admin/user/add"> -->
+    <shiro:hasPermission name="/admin/role/add">
         <a onclick="addRoleFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
-   <!--  </shiro:hasPermission> -->
+    </shiro:hasPermission>
 </div>
 
 <!-- 弹窗区 -->
@@ -64,14 +64,9 @@
                 align : 'center',
                 formatter : function(value, row, index) {
                     var str = '';
-                       /* <shiro:hasPermission name="/user/edit"> */
-                         	str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
-                           /*  str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId); */
-                        /* </shiro:hasPermission> */
-                        /* <shiro:hasPermission name="/user/delete"> */
-                          /*  str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId); */
-                       /*  /* </shiro:hasPermission> */ 
+                    <shiro:hasPermission name="/admin/role/grant">
+                   		str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
+                   	</shiro:hasPermission>
                     return str;
                 }
             },{
@@ -118,8 +113,7 @@
                 align: 'center'
             }] ],
             onLoadSuccess:function(data){
-              /*   $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
-                $('.user-easyui-linkbutton-del').linkbutton({text:'删除'}); */
+                $('.user-easyui-linkbutton-edit').linkbutton({text:'授权'});
             },
             toolbar : '#toolbar'
         });

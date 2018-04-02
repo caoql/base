@@ -2,7 +2,10 @@ package com.cal.base.system.entity.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+
+import com.cal.base.common.reflect.ObjReflect;
 
 /**
  * 资源界面数据展示DTO
@@ -41,14 +44,11 @@ public class ResourceListDTO implements Serializable {
 
     private String updator;
 
+    private List<ResourceListDTO> children;
+    
     @Override
 	public String toString() {
-		return "Resource [resourceId=" + resourceId + ", name=" + name
-				+ ", url=" + url + ", type=" + type + ", description="
-				+ description + ", nodeOrder=" + nodeOrder + ", pid=" + pid
-				+ ", isEnabled=" + isEnabled + ", remark=" + remark
-				+ ", createTime=" + createTime + ", creator=" + creator
-				+ ", updateTime=" + updateTime + ", updator=" + updator + "]";
+		return ObjReflect.toString(this);
 	}
 
 	public String getResourceId() {
@@ -168,4 +168,12 @@ public class ResourceListDTO implements Serializable {
     public void setUpdator(String updator) {
         this.updator = updator;
     }
+
+	public List<ResourceListDTO> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<ResourceListDTO> children) {
+		this.children = children;
+	}
 }

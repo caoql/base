@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cal.base.SystemConstant;
 import com.cal.base.common.cache.RedisClient;
+import com.cal.base.common.enums.ErrorCodeEnum;
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponseInfo;
@@ -123,8 +124,11 @@ public class LoginController extends BaseController {
 	@ResponseBody
 	public Object getResources(HttpServletRequest request) {
 		// 以后拿当期用户的
-		Long userId = 12L;
-		ResponseInfo info = userService.getResourcesByUserid(userId);
+		CurrentUserInfo userinfo = WebUtil.getRedisUser();
+		if (userinfo == null) {
+			throw new CommonException(ErrorCodeEnum.CURRENT_USER_IS_NULL);
+		}
+		ResponseInfo info = userService.getResourcesByUserid(userinfo.getUserId());
 		return info;
 	}
 }

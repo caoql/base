@@ -26,4 +26,7 @@ public interface ResourceMapper {
 	
 	// 查询所有资源
 	List<ResourcePO> queryAll(Map<String,Object> map);
+
+	// 批量删除通过资源ID
+	int deleteByIds(List<String> ids);
 }

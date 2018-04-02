@@ -166,7 +166,7 @@ public class UserService {
 
 	// 通过用户信息获取资源列表
 	
-	public ResponseInfo getResourcesByUserid(Long userId) {
+	public ResponseInfo getResourcesByUserid(String userId) {
 		ResponseInfo info = new ResponseInfo();
 		List<Map<String, Object>> resultList = userMapper.getResources(userId);
 		List<Map<String, Object>> infoList = new ArrayList<Map<String, Object>>();
@@ -283,8 +283,8 @@ public class UserService {
 		// 先删后增
 		userRoleMapper.deleteByUserId(userId);
 		
-		List<String> roleIds = vo.getRoleIds();
-		for (String roleId : roleIds) {
+		String[] ids = vo.getRoleIds().split(",");
+		for (String roleId : ids) {
 			UserRolePO record = new UserRolePO();
 			record.setUserId(userId);
 			record.setRoleId(roleId);

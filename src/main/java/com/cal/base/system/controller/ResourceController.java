@@ -3,12 +3,15 @@ package com.cal.base.system.controller;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -89,11 +92,29 @@ public class ResourceController extends BaseController {
 	}
     
     /**
+     * 
      * 查询所有的资源tree
      */
     @RequestMapping("/allTrees")
     @ResponseBody
     public Object allTree() {
         return resourceService.selectAllTree();
+    }
+    
+    /**
+     * 只有管理员有权限删除
+     * 资源删除
+     * @param resourceId
+     * @return
+     */ 
+    @RequiresRoles("admin")
+    @ResponseBody
+    @DeleteMapping("/delete/{id}")
+    public Object deleteResource(@PathVariable("id") String resourceId) {
+    	boolean flag = resourceService.deleteResource(resourceId);
+    	if (!flag) {
+			return renderError("删除失败！");
+		}
+		return renderSuccess("删除成功！");
     }
 }

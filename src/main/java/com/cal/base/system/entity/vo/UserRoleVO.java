@@ -1,7 +1,6 @@
 package com.cal.base.system.entity.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,7 +16,7 @@ public class UserRoleVO implements Serializable {
 	private String userId;
 	
 	@NotNull(message="角色绑定信息不能为空")
-	private List<String> roleIds;
+	private String roleIds;
 
 	@Override
 	public String toString() {
@@ -32,11 +31,11 @@ public class UserRoleVO implements Serializable {
 		this.userId = userId;
 	}
 
-	public List<String> getRoleIds() {
+	public String getRoleIds() {
 		return roleIds;
 	}
 
-	public void setRoleIds(List<String> roleIds) {
+	public void setRoleIds(String roleIds) {
 		this.roleIds = roleIds;
 	}
 }

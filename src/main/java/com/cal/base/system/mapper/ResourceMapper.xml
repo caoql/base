@@ -223,8 +223,20 @@
 		from system_resource
 		<where>
 			<if test="type != null and type != ''">
-				AND resource.TYPE = #{type}
+				AND TYPE = #{type}
+			</if>
+			<if test="pid != null and pid != ''">
+				AND PID = #{pid}
 			</if>
 		</where>
 	</select>
+	
+	<!-- 批量删除通过资源ID -->
+	<delete id="deleteByIds">
+		DELETE FROM system_resource 
+		WHERE RESOURCE_ID IN 
+		<foreach collection="list" index="index" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
 </mapper>

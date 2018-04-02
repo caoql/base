@@ -33,12 +33,10 @@
 <!-- 数据展示 end -->
 
 <div id="toolbar" style="display: none;">
-   <!--  <shiro:hasPermission name="/admin/user/add"> -->
-        <a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
-        <a onclick="exportUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导出</a>
-        <a onclick="downloadUserTemplet();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导入模板下载</a>
-        <a onclick="batchImport();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">批量导入</a>
-   <!--  </shiro:hasPermission> -->
+	<shiro:hasPermission name="/admin/user/add"><a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/export"><a onclick="exportUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导出</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/download"><a onclick="downloadUserTemplet();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导入模板下载</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/import"><a onclick="batchImport();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">批量导入</a></shiro:hasPermission>
 </div>
 
 <!-- 弹窗区 -->
@@ -68,15 +66,17 @@
                 align : 'center',
                 formatter : function(value, row, index) {
                     var str = '';
-                       /* <shiro:hasPermission name="/user/edit"> */
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="bindRoleFun(\'{0}\');" >绑定角色</a>', row.userId);
-                        	str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
-                        /* </shiro:hasPermission> */
-                        /* <shiro:hasPermission name="/user/delete"> */
-                            str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-                            str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
-                        /* </shiro:hasPermission> */
+					<shiro:hasPermission name="/admin/user/bindrole">
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-bind" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="bindRoleFun(\'{0}\');" >绑定角色</a>', row.userId);
+					</shiro:hasPermission>
+					<shiro:hasPermission name="/admin/user/edit">  	
+					      str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
+					</shiro:hasPermission>
+					<shiro:hasPermission name="/admin/user/delete">
+					      str += '&nbsp;|&nbsp;';
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
+					</shiro:hasPermission>
                     return str;
                 }
             },{
@@ -135,6 +135,7 @@
                 align: 'center'
             }] ],
             onLoadSuccess:function(data){
+            	$('.user-easyui-linkbutton-bind').linkbutton({text:'绑定角色'});
                 $('.user-easyui-linkbutton-edit').linkbutton({text:'编辑'});
                 $('.user-easyui-linkbutton-del').linkbutton({text:'删除'});
             },

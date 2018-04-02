@@ -56,6 +56,15 @@ var obj = {
 		$('#' + datagridId).datagrid('unselectAll');
 		$('#' + datagridId).datagrid('reload');
 	},
+	// 刷新treegrid数据列表
+	refreshTreegrid : function(treegridId, type) {
+		if ("queryAll" == type) {
+			$('#' + treegridId).treegrid('options').queryParams = "{}";
+		}
+		$('#' + treegridId).treegrid('uncheckAll');
+		$('#' + treegridId).treegrid('unselectAll');
+		$('#' + treegridId).treegrid('reload');
+	},
 	/**
 	 * 弹出操作窗口，框架中所有弹窗中的内容都必需是一个单独的页面，通过url指定
 	 * 

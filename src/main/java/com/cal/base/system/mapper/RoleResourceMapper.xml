@@ -70,4 +70,14 @@
 		delete from system_role_resource
 		where ROLE_ID = #{value}
 	</delete>
+	
+	<!-- 通过资源ID查询数据总数 -->
+	<select id="selectPosByIds" resultType="int">
+		SELECT COUNT(*) FROM system_role_resource
+		WHERE RESOURCE_ID IN 
+		<foreach collection="list" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	
 </mapper>

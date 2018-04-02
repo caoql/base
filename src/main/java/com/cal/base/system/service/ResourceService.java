@@ -12,16 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cal.base.common.enums.ErrorCodeEnum;
+import com.cal.base.common.exception.ServiceException;
 import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponsePageInfo;
 import com.cal.base.common.info.Tree;
-import com.cal.base.common.util.page.PageUtil;
 import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.dto.ResourceListDTO;
 import com.cal.base.system.entity.po.ResourcePO;
 import com.cal.base.system.entity.query.ResourceParam;
 import com.cal.base.system.entity.vo.ResourceVO;
 import com.cal.base.system.mapper.ResourceMapper;
+import com.cal.base.system.mapper.RoleResourceMapper;
 
 /**
  * 组织相关的业务处理Service
@@ -39,6 +40,9 @@ public class ResourceService {
 	@Autowired
 	private ResourceMapper resourceMapper;
 
+	@Autowired
+	private RoleResourceMapper roleResourceMapper;
+	
 	/**
 	 * 资源界面数据展示
 	 * 
@@ -47,19 +51,57 @@ public class ResourceService {
 	 */
 	public ResponsePageInfo listAll(ResourceParam param) {
 		ResponsePageInfo info = new ResponsePageInfo();
-		// 1.请求参数封装
-		PageUtil.pageBefore(info, param);
-
-		// 2.调用dao执行方法
-		List<ResourceListDTO> list = resourceMapper.listAll(param);
-
-		// 3.返回数据封装
-		PageUtil.pageAfter(info, list);
+		List<ResourceListDTO> resultList = resourceMapper.listAll(param);
+		List<ResourceListDTO> infoList = new ArrayList<ResourceListDTO>();
+		// 对数据进行处理
+				if (resultList != null && resultList.size() > 0) {
+					int len = resultList.size();
+				    for (int i = 0; i < len; i++) {
+				    	ResourceListDTO o = resultList.get(i);
+				    	//第一轮先拿出主菜单
+				    	if (StringUtils.isBlank(o.getPid())) {
+				    		//封装树形数据一级结构
+				    		infoList.add(o);
+				    	} 
+				    }
+				}
+				loopChildList(resultList, infoList);
+				// 组织过滤后期待优化？
+		        if (infoList.size() > 0) {
+		        	info.rows = infoList;
+		        } else {
+		        	info.rows = resultList;
+		        }
 
 		info.setErrorInfo(ErrorCodeEnum.CALL_SUCCESS);
 		return info;
 	}
 
+	/**
+     * 做组织的datagrid展示
+     * @param resultList
+     * @param infoList
+     */
+    private void loopChildList(List<ResourceListDTO> resultList,
+			List<ResourceListDTO> infoList) {
+		for (ResourceListDTO m: infoList) {
+			String code = m.getResourceId();
+			List<ResourceListDTO> childMenu = new ArrayList<ResourceListDTO>();
+			if (resultList != null && resultList.size() > 0) {
+				int len = resultList.size();
+			    for (int i = 0; i < len; i++) {
+			    	ResourceListDTO r = resultList.get(i);
+			    	//第二轮拿出子菜单
+			    	if (code.equals(r.getPid())) {
+				        childMenu.add(r);
+			    	} 
+			    }
+			    loopChildList(resultList, childMenu);//循环迭代下一个
+			}
+			m.setChildren(childMenu);
+		}
+	}
+    
 	/**
 	 * 资源新增数据保存
 	 * 
@@ -132,4 +174,55 @@ public class ResourceService {
             m.setChildren(childMenu);
         }
     }
+
+	/**
+	 * 资源删除
+	 * @param resourceId
+	 * @return
+	 */
+	public boolean deleteResource(String resourceId) {
+		// 1.先校验
+		if (StringUtils.isBlank(resourceId)) {
+			throw new ServiceException("资源ID不能为空");
+		}
+		int num = 0;
+	    List<String> ids = getIds(resourceId);
+	    // 校验这些资源是否被引用
+	    if (ids != null && ids.size() > 0) {
+	    	int result = roleResourceMapper.selectPosByIds(ids);
+	    	if (result > 0) {
+	    		throw new ServiceException("资源被引用，不能删除");
+	    	}
+	    	num = resourceMapper.deleteByIds(ids);
+	    }
+	    if (num > 0) {
+	    	return true;
+	    }
+		return false;
+	}
+
+	// 获取资源及其后代的resourceId
+	private List<String> getIds(String resourceId) {
+		List<String> ids = new ArrayList<String>();
+		// 通过id查询code信息
+		ResourcePO po = resourceMapper.selectByPrimaryKey(resourceId);
+    	loopResourceId(ids, po);
+		return ids;
+	}
+
+	private void loopResourceId(List<String> ids, ResourcePO po) {
+		if (po != null && StringUtils.isNoneBlank(po.getResourceId())) {
+    		ids.add(po.getResourceId());
+    		// 1.通过resourceId转化成pid查询所有的子pid和子resourceId
+    		Map<String, Object> map = new HashMap<>();
+    		map.put("pid", po.getResourceId());
+    		List<ResourcePO> pos = resourceMapper.queryAll(map);
+    		if (pos != null && pos.size() > 0) {
+    			// 2.子resourceId添加，子pid继续重复第二步
+    			for (ResourcePO item : pos) {
+    				loopResourceId(ids, item);
+    			}
+    		}
+    	}
+	}
 }

@@ -32,12 +32,17 @@
 			if (!formdata) {
 				return false;
 			}
+			var roleIds = formdata.roleIds;
+			var ids = "";
+			if (roleIds) {
+				ids = roleIds.toString();
+			}
+			formdata.roleIds = ids;
 			// 发送请求处理
 			$.ajax({
 				type : 'POST',
 				url : '${path}/admin/user/bindrole',
-				contentType: 'application/json',
-				data : JSON.stringify(formdata),
+				data : formdata,
 				success : function(data) {
 					if (data != null) {
 						if (data.code == 0) {
