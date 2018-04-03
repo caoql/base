@@ -24,6 +24,9 @@ public interface UserRoleMapper {
 	
 	// 根据用户ID删除角色绑定
 	int deleteByUserId(String userId);
+	
+	// 根据角色ID删除角色绑定
+	int deleteByRoleId(String roleId);
 
 	// 根据用户ID获取角色信息
 	List<Map<String, Object>> queryUserRoleByUserId(String userId);

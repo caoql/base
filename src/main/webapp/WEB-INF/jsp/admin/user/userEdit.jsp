@@ -1,40 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../common/global.jsp"%>
-<script type="text/javascript">
-	$(function() {
-		// 绑定提交
-		$('#btn-save').on('click', function() {
-			// 校验表单默认规则
-			if (!$('#userEditForm').form('validate')) {
-				return false;
-			}
-			// 获取数据
-			var formdata = $$.serializeToJson('#userEditForm');
-			if (!formdata) {
-				return false;
-			}
-			// 发送请求处理
-			$.ajax({
-				type : 'POST',
-				url : '${path}/admin/user/edit',
-				data : formdata,
-				success : function(data) {
-					if (data != null) {
-						if (data.code == 0) {
-							$('#editForm').dialog('close');
-							$$.refreshDatagrid('datagrid');
-						} else {
-							$.messager.alert('提示信息', data.msg, 'error');
-						}
-					} else {
-						$.messager.alert('提示信息','修改失败','error');
-					}
-				}
-			});
-		});
-	});
-</script>
 <div data-options="fit:true,border:false">
 	<form id="userEditForm" method="post">
 		<div>
@@ -89,3 +55,37 @@
 		</div>
 	</form>
 </div>
+<script type="text/javascript">
+	$(function() {
+		// 绑定提交
+		$('#btn-save').on('click', function() {
+			// 校验表单默认规则
+			if (!$('#userEditForm').form('validate')) {
+				return false;
+			}
+			// 获取数据
+			var formdata = $$.serializeToJson('#userEditForm');
+			if (!formdata) {
+				return false;
+			}
+			// 发送请求处理
+			$.ajax({
+				type : 'POST',
+				url : '${path}/admin/user/edit',
+				data : formdata,
+				success : function(data) {
+					if (data != null) {
+						if (data.code == 0) {
+							$('#editForm').dialog('close');
+							$$.refreshDatagrid('datagrid');
+						} else {
+							$.messager.alert('提示信息', data.msg, 'error');
+						}
+					} else {
+						$.messager.alert('提示信息','修改失败','error');
+					}
+				}
+			});
+		});
+	});
+</script>

@@ -121,14 +121,15 @@
 					align : 'center'
 				}, {
 					width : '100',
-					title : '顺序',
+					title : '同级顺序',
 					field : 'nodeOrder',
 					align : 'center'
 				}, {
 					width : '100',
 					title : '父级ID',
 					field : 'pid',
-					align : 'center'
+					align : 'center',
+					hidden: true
 				}, {
 					width : '120',
 					title : '描述',

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +35,6 @@ import com.cal.base.system.mapper.UserRoleMapper;
  */
 @Service
 public class RoleService {
-	// 日志记录器
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private RoleMapper roleMapper;
@@ -149,6 +146,44 @@ public class RoleService {
 			throw new CommonException(ErrorCodeEnum.PARAM_IS_NULL);
 		}
 		return userRoleMapper.queryUserRoleByUserId(userId);
+	}
+
+	// 角色删除
+	@Transactional
+	public boolean deleteByPrimaryKey(String roleId) {
+		if (StringUtils.isBlank(roleId)) {
+			throw new CommonException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		// 角色被绑定删除
+		userRoleMapper.deleteByRoleId(roleId);
+		// 角色删除
+		int r = roleMapper.deleteByPrimaryKey(roleId);
+		if (r > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public RolePO queryRole(String roleId) {
+		if (StringUtils.isBlank(roleId)) {
+			throw new CommonException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		return roleMapper.selectByPrimaryKey(roleId);
+	}
+
+	public boolean updateRole(RoleVO editVo) {
+		if (editVo == null) {
+			throw new CommonException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		RolePO record = editVo.toRolePO();
+		if (StringUtils.isBlank(record.getRoleId())) {
+			throw new CommonException("角色ID不能为空");
+		}
+		int r = roleMapper.updateByPrimaryKeySelective(record);
+		if (r > 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

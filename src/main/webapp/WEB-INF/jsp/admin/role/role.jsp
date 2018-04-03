@@ -43,9 +43,9 @@
 <div id="editForm"></div>
 <div id="grantForm"></div>
 <script type="text/javascript">
-    var userDataGrid;
+    var roleDataGrid;
     $(function() {
-       userDataGrid = $('#datagrid').datagrid({
+       roleDataGrid = $('#datagrid').datagrid({
             url : '${path}/admin/role/list',
             fit : true,
             striped : true,
@@ -60,13 +60,21 @@
             columns : [ [{
                 field : 'action',
                 title : '操作',
-                width : 200,
+                width : 250,
                 align : 'center',
                 formatter : function(value, row, index) {
                     var str = '';
                     <shiro:hasPermission name="/admin/role/grant">
-                   		str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
+                   		str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-grant" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
                    	</shiro:hasPermission>
+                   	<shiro:hasPermission name="/admin/role/edit">
+	               	    str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+	           			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editRoleFun(\'{0}\');" >编辑</a>', row.roleId);
+	           		</shiro:hasPermission>
+                   	<shiro:hasPermission name="/admin/role/delete">
+                   	    str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+               			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="delFun(\'{0}\');" >删除</a>', row.roleId);
+               		</shiro:hasPermission>
                     return str;
                 }
             },{
@@ -113,7 +121,9 @@
                 align: 'center'
             }] ],
             onLoadSuccess:function(data){
-                $('.user-easyui-linkbutton-edit').linkbutton({text:'授权'});
+                $('.role-easyui-linkbutton-grant').linkbutton({text:'授权'});
+                $('.role-easyui-linkbutton-edit').linkbutton({text:'编辑'});
+                $('.role-easyui-linkbutton-del').linkbutton({text:'删除'});
             },
             toolbar : '#toolbar'
         });
@@ -122,13 +132,13 @@
     // 查询
     function searchFun() {
     	console.log($.serializeObject($('#searchForm')));
-        userDataGrid.datagrid('load', $.serializeObject($('#searchForm')));
+        roleDataGrid.datagrid('load', $.serializeObject($('#searchForm')));
     }
     
     // 清空
     function cleanFun() {
         $('#searchForm input').val('');
-        userDataGrid.datagrid('load', {});
+        roleDataGrid.datagrid('load', {});
     }
     
     // 添加角色
@@ -161,13 +171,13 @@
         });
     }
     
-    // 编辑用户
-    function editUserFun(id) {
+    // 编辑角色
+    function editRoleFun(id) {
     	$('#editForm').dialog({
             title : '编辑',
             width : 600,
             height : 350,
-            href : '${path}/admin/user/editpage/' + id,
+            href : '${path}/admin/role/editpage/' + id,
             modal: true ,
             buttons : [{
             	id: 'btn-save',
@@ -176,19 +186,19 @@
         });
     }
  
-    // 删除用户-根据用户ID
-    function deleteUserFun(id) {
+    // 删除角色-根据角色ID
+    function delFun(id) {
         // 加parent会锁屏
-        parent.$.messager.confirm('询问', '您是否要删除当前用户？', function(b) {
+        parent.$.messager.confirm('询问', '您是否要删除当前角色？', function(b) {
             if (b) {
             	$$.progressLoad();
             	$.ajax({
             		type: 'DELETE',
-            		url: '${path }/admin/user/delete/' + id,
+            		url: '${path }/admin/role/delete/' + id,
             		success: function (data) {
             			if (data && data.code == 0) {
                             parent.$.messager.alert('提示', data.msg, 'info');
-                            userDataGrid.datagrid('reload');
+                            roleDataGrid.datagrid('reload');
                         } else {
                             parent.$.messager.alert('错误', data.msg, 'error');
                         }

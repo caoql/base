@@ -1,6 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../common/global.jsp"%>
+<div id="roleGrantLayout" class="easyui-layout" data-options="fit:true,border:false">
+	<div data-options="region:'west'" title="系统资源" style="width: 300px; padding: 1px;">
+		<div class="well well-small">
+			<form id="roleGrantForm">
+				<input name="id" type="hidden" value="${id}" readonly="readonly">
+				<ul id="resourceTree"></ul>
+				<input id="resourceIds" name="resourceIds" type="hidden" />
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'center'" title="" style="overflow: hidden; padding: 10px;">
+		<div class="role-button">
+			<button class="btn btn-success" onclick="checkAll();">全选</button>
+			<br /> <br />
+			<button class="btn btn-warning" onclick="checkInverse();">反选</button>
+			<br /> <br />
+			<button class="btn btn-inverse" onclick="uncheckAll();">取消</button>
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	var resourceTree;
 	$(function() {
@@ -105,23 +125,3 @@
 		}
 	}
 </script>
-<div id="roleGrantLayout" class="easyui-layout" data-options="fit:true,border:false">
-	<div data-options="region:'west'" title="系统资源" style="width: 300px; padding: 1px;">
-		<div class="well well-small">
-			<form id="roleGrantForm">
-				<input name="id" type="hidden" value="${id}" readonly="readonly">
-				<ul id="resourceTree"></ul>
-				<input id="resourceIds" name="resourceIds" type="hidden" />
-			</form>
-		</div>
-	</div>
-	<div data-options="region:'center'" title="" style="overflow: hidden; padding: 10px;">
-		<div class="role-button">
-			<button class="btn btn-success" onclick="checkAll();">全选</button>
-			<br /> <br />
-			<button class="btn btn-warning" onclick="checkInverse();">反选</button>
-			<br /> <br />
-			<button class="btn btn-inverse" onclick="uncheckAll();">取消</button>
-		</div>
-	</div>
-</div>

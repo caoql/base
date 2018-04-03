@@ -1,55 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../common/global.jsp"%>
-<script type="text/javascript">
-	$(function() {
-		pidInit();
-		// 绑定提交
-		$('#btn-save').on('click', function() {
-			// 校验表单默认规则
-			if (!$('#resourceEditForm').form('validate')) {
-				return false;
-			}
-			// 获取数据
-			var formdata = $$.serializeToJson('#resourceEditForm');
-			if (!formdata) {
-				return false;
-			}
-			// 发送请求处理
-			$.ajax({
-				type: 'POST',
-				url: '${path }/admin/resource/edit',
-				data: formdata,
-				success: function(data) {
-					if (data != null) {
-						if (data.code == 0) {
-							$('#editForm').dialog('close');
-							$$.refreshTreegrid('resourceTreeGrid');
-						} else {
-							$.messager.alert('提示信息', data.msg, 'error');
-						}
-					} else {
-						$.messager.alert('提示信息','新增失败','error');
-					}
-				}
-			});
-		});
-	});
-	
-	/**
-	 * 初始化上级资源下拉框
-	 */
-	function pidInit() {
-		//上级资源-资源树
-		$('#pid').combotree({
-			method: 'GET',
-	        url: '${path }/admin/resource/pidtree',
-	        parentField: 'pid',
-	        lines: true,
-	        panelHeight: 'auto'
-	    });
-	}
-</script>
 <div data-options="fit:true,border:false">
 	<form id="resourceEditForm">
 		<div>
@@ -86,7 +37,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td align="right">顺序：</td>
+						<td align="right">同级顺序：</td>
 						<td><input name="nodeOrder" type="text" style="width:200px;"
 							class="easyui-numberbox" data-options="required:false" value="${resource.nodeOrder}">
 						</td>
@@ -122,3 +73,53 @@
 		</div>
 	</form>
 </div>
+<script type="text/javascript">
+	$(function() {
+		pidInit();
+		// 绑定提交
+		$('#btn-save').on('click', function() {
+			// 校验表单默认规则
+			if (!$('#resourceEditForm').form('validate')) {
+				return false;
+			}
+			// 获取数据
+			var formdata = $$.serializeToJson('#resourceEditForm');
+			if (!formdata) {
+				return false;
+			}
+			
+			// 发送请求处理
+			$.ajax({
+				type: 'POST',
+				url: '${path }/admin/resource/edit',
+				data: formdata,
+				success: function(data) {
+					if (data != null) {
+						if (data.code == 0) {
+							$('#editForm').dialog('close');
+							$$.refreshTreegrid('resourceTreeGrid');
+						} else {
+							$.messager.alert('提示信息', data.msg, 'error');
+						}
+					} else {
+						$.messager.alert('提示信息','新增失败','error');
+					}
+				}
+			});
+		});
+	});
+	
+	/**
+	 * 初始化上级资源下拉框
+	 */
+	function pidInit() {
+		//上级资源-资源树
+		$('#pid').combotree({
+			method: 'GET',
+	        url: '${path }/admin/resource/pidtree',
+	        parentField: 'pid',
+	        lines: true,
+	        panelHeight: 'auto'
+	    });
+	}
+</script>

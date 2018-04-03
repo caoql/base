@@ -47,6 +47,12 @@
 		delete from system_user_role
 		where USER_ID = #{value}
 	</delete>
+	
+	<!-- 根据角色ID删除角色绑定 -->
+	<delete id="deleteByRoleId">
+		delete from system_user_role
+		where ROLE_ID = #{value}
+	</delete>
 
 	<insert id="insertSelective">
 		<selectKey keyColumn="ID" keyProperty="id" order="BEFORE" resultType="java.lang.String"> 

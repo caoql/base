@@ -1,6 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../common/global.jsp"%>
+<div data-options="fit:true,border:false">
+	<form id="userBindForm" method="post">
+		<div>
+			<table>
+				<tbody>
+					<tr>
+						<input id="userId" name="userId" type="hidden"
+							value="${id}">
+						<td align="right">请选择角色：</td>
+						<td><input id="roleIds" name="roleIds" type="text" data-options="required:true"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+</div>
 <script type="text/javascript">
 	//回显角色值
 	var roleIds = [];
@@ -59,19 +75,3 @@
 		});
 	});
 </script>
-<div data-options="fit:true,border:false">
-	<form id="userBindForm" method="post">
-		<div>
-			<table>
-				<tbody>
-					<tr>
-						<input id="userId" name="userId" type="hidden"
-							value="${id}">
-						<td align="right">请选择角色：</td>
-						<td><input id="roleIds" name="roleIds" type="text" data-options="required:true"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</form>
-</div>
