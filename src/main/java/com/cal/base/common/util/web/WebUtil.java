@@ -91,8 +91,7 @@ public class WebUtil extends org.springframework.web.util.WebUtils {
 
 	// 获取到当前请求的request对象
 	public static HttpServletRequest getCurrentRequest() {
-		return ((ServletRequestAttributes) RequestContextHolder
-				.getRequestAttributes()).getRequest();
+		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	}
 
 	// 获取客户端IP

@@ -25,7 +25,8 @@ public enum ErrorCodeEnum {
 	DB_UPDATE_ERROR(8020, "数据库更新数据失败"),
 	DB_DELETE_ERROR(8030, "数据库删除数据失败"),
 	
-	PARAM_IS_NULL(1000,"参数为空");
+	PARAM_IS_NULL(1000,"参数为空"), 
+	AUTH_ERROR(6666,"无权访问");
 	
 	
     /**

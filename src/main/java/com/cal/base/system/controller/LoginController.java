@@ -3,6 +3,7 @@ package com.cal.base.system.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -114,10 +115,17 @@ public class LoginController extends BaseController {
         	return renderError("用户信息为空");
         }
 	}
-
-	// 登录系统做到session共享或者是token共享
-
-	// 发送短信验证码限速，网站限制IP地址一秒之内不能访问超过N次等
+	
+	@PostMapping("/loginout")
+	@ResponseBody
+	public Object doLoginOut(HttpServletRequest request, HttpServletResponse response) {
+		logger.info("POST请求退出系统");
+		 // 删除redis
+		RedisClient.del(SystemConstant.getSessionKey(WebUtil.getSessionId()));
+		Subject subject = SecurityUtils.getSubject();
+	    if (subject != null) subject.logout();
+		return  renderSuccess();
+	}
 
 	// 获取用户的资源
 	@PostMapping("/getresources")

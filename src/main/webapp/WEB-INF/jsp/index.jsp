@@ -6,6 +6,38 @@
 	<%@ include file="common/base.jsp" %>
 	<title>base系统</title> 
 	<link rel="stylesheet" type="text/css" href="${path}/css/index.css" />
+</head>
+<body class="easyui-layout" data-options="fit:true">
+	<!-- 顶部信息展示区 begin -->
+    <div class="header" data-options="region:'north', border:false">
+    	<div class="logo"></div>
+    	<div class="title">base系统</div>
+    	<div class="welcome"><span id="btn-loginout">退出</span>&nbsp;&nbsp;|您好,<span id="currentUser">XXX</span>(<em id="currentRole">YYY</em>)</div>
+    </div>
+    <!-- 顶部信息展示区 end -->
+    
+    <!-- 左边菜单栏  begin -->
+    <div id="menubar" data-options="region:'west', title:'系统菜单', border:false, split:true, iconCls:'icon-blank', collapsed:false">
+         <div class="easyui-layout" data-options="fit:true">
+	         <!-- 系统菜单首部展示区          begin-->
+	         <div id="menu_header" data-options="region:'center', border:false, split:true, collapsible:'true'">
+	             <!-- 折叠面板展示菜单 -->
+	             <div id="sysMenu" class="easyui-accordion" data-options="border:false">
+	             </div> 
+	         </div>
+	         <!-- 系统菜单首部展示区          end-->
+         </div>
+    </div>
+	<!-- 左边菜单栏  end -->	
+	 
+	<!-- 中右边欢迎页Tab begin -->
+    <div class="main" data-options="region:'center', border:false">
+        <div id="centerTab" class="easyui-tabs" data-options="plain:true, fit:true, tabHeight:40">
+			<div id="welcomeTab" title="欢迎页面" data-options="closable:false">
+			</div>
+		</div>
+    </div>
+	<!-- 中右边欢迎页Tab end -->
 	<script type="text/javascript">
 		// 初始化函数執行
 		$(function(){
@@ -19,6 +51,29 @@
 				onClose:function() {
 					return false;
 				}
+			});
+			
+			// 退出
+			$('#btn-loginout').on('click', function() {
+				parent.$.messager.confirm('询问', '确认要退出系统吗?', function(b) {
+					if (b) {
+						$$.progressLoad();
+						$.ajax({
+									url : '${path }/loginout',
+									type : 'POST',
+									success : function(data) {
+										$$.progressClose();
+										if (data && data.code == 0) {
+											setTimeout(function(){
+												window.location.href = "${path }/login.jsp";
+											}, 1000);
+										} else {
+											parent.$.messager.alert('错误', data.msg,'error');
+										}
+									}
+								});
+					}
+				});
 			});
 		});
 		
@@ -102,73 +157,6 @@
 				});
 			}
 		}
-		
-		//打开对话框
-		function jcdfDialog(frameName, href, title, maxHeight, maxWidth, widthRate) {
-			var dialogDiv = $("#jcdfDiglogDiv");
-			if(!dialogDiv || dialogDiv.length <= 0) {
-				var html = '<div id="jcdfDiglogDiv" style="display: none;">'+
-					'<iframe id="jcdfDiglogDivIframe" name="" width="100%" height="200" src="" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'+
-					'</div>';
-				$("body").append(html);
-			}
-			$("#jcdfDiglogDivIframe").attr('src', href);
-			$('#jcdfDiglogDiv').css('display','');
-			$('#jcdfDiglogDiv').dialog({
-				title:title,
-				modal:true,
-				maximizable:true,
-				resizable:true,
-				closed: false,
-				onOpen:function() {
-					$$.fillDialogWidthAndHeight("jcdfDiglogDiv", widthRate, maxHeight, maxWidth);
-					$("#jcdfDiglogDivIframe").height($("#jcdfDiglogDivIframe").parent().height()-4);
-				},
-				onResize:function() {
-					$("#jcdfDiglogDivIframe").height($("#jcdfDiglogDivIframe").parent().height()-4);
-				},
-				onClose:function() {
-					$("#jcdfDiglogDivIframe").attr('src', 'about:blank');
-				}
-			});
-		}
-		
-		//关闭窗口
-		function closeJcdfDialog() {
-			$('#jcdfDiglogDiv').dialog('close');
-		}
 	</script>
-</head>
-<body class="easyui-layout" data-options="fit:true">
-	<!-- 顶部信息展示区 begin -->
-    <div class="header" data-options="region:'north', border:false">
-    	<div class="logo"></div>
-    	<div class="title">base系统</div>
-    	<div class="welcome">您好,<span id="currentUser">XXX</span>(<em id="currentRole">YYY</em>)</div>
-    </div>
-    <!-- 顶部信息展示区 end -->
-    
-    <!-- 左边菜单栏  begin -->
-    <div id="menubar" data-options="region:'west', title:'系统菜单', border:false, split:true, iconCls:'icon-blank', collapsed:false">
-         <div class="easyui-layout" data-options="fit:true">
-	         <!-- 系统菜单首部展示区          begin-->
-	         <div id="menu_header" data-options="region:'center', border:false, split:true, collapsible:'true'">
-	             <!-- 折叠面板展示菜单 -->
-	             <div id="sysMenu" class="easyui-accordion" data-options="border:false">
-	             </div> 
-	         </div>
-	         <!-- 系统菜单首部展示区          end-->
-         </div>
-    </div>
-	<!-- 左边菜单栏  end -->	
-	 
-	<!-- 中右边欢迎页Tab begin -->
-    <div class="main" data-options="region:'center', border:false">
-        <div id="centerTab" class="easyui-tabs" data-options="plain:true, fit:true, tabHeight:40">
-			<div id="welcomeTab" title="欢迎页面" data-options="closable:false">
-			</div>
-		</div>
-    </div>
-	<!-- 中右边欢迎页Tab end -->
 </body>
 </html>

@@ -26,17 +26,17 @@
 				/favicon.ico =anon
 				/login.jsp = anon
 				/login = anon
-				/** = user
+				/** = authc
 			</value>
 		</property>
+		<!-- 过滤器 -->
 		<property name="filters">
 			<map>
-				<entry key="user" value-ref="ajaxSessionFilter" />
+				<entry key="authc" value-ref="authFilter" />
 			</map>
 		</property>
 	</bean>
-	<!-- ajax session超时时处理 -->
-	<bean id="ajaxSessionFilter" class="com.cal.base.common.shiro.ShiroAjaxSessionFilter" />
+	<bean id="authFilter" class="com.cal.base.common.shiro.filter.ShiroAuthFilter" />
 
 	<!--安全管理器 -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
