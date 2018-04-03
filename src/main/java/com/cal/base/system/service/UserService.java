@@ -176,7 +176,7 @@ public class UserService {
 			for (int i = 0; i < len; i++) {
 				Map<String, Object> map = resultList.get(i);
 				// 第一轮先拿出主菜单
-				if (map.get("pid") == null) {
+				if (SystemConstant.RESOURCE_ROOT_DEFAULT.equals(map.get("pid"))) {
 					map.put("level", 0);
 					infoList.add(map);
 				}

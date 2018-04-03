@@ -10,7 +10,7 @@
 				return false;
 			}
 			// 获取数据
-			var formdata = $$.serializeToJson('#userEditForm', true);
+			var formdata = $$.serializeToJson('#userEditForm');
 			if (!formdata) {
 				return false;
 			}

@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cal.base.SystemConstant;
 import com.cal.base.common.enums.ErrorCodeEnum;
 import com.cal.base.common.exception.ServiceException;
 import com.cal.base.common.info.CurrentUserInfo;
@@ -54,24 +55,24 @@ public class ResourceService {
 		List<ResourceListDTO> resultList = resourceMapper.listAll(param);
 		List<ResourceListDTO> infoList = new ArrayList<ResourceListDTO>();
 		// 对数据进行处理
-				if (resultList != null && resultList.size() > 0) {
-					int len = resultList.size();
-				    for (int i = 0; i < len; i++) {
-				    	ResourceListDTO o = resultList.get(i);
-				    	//第一轮先拿出主菜单
-				    	if (StringUtils.isBlank(o.getPid())) {
-				    		//封装树形数据一级结构
-				    		infoList.add(o);
-				    	} 
-				    }
-				}
-				loopChildList(resultList, infoList);
-				// 组织过滤后期待优化？
-		        if (infoList.size() > 0) {
-		        	info.rows = infoList;
-		        } else {
-		        	info.rows = resultList;
-		        }
+		if (resultList != null && resultList.size() > 0) {
+			int len = resultList.size();
+		    for (int i = 0; i < len; i++) {
+		    	ResourceListDTO o = resultList.get(i);
+		    	//第一轮先拿出主菜单
+		    	if (SystemConstant.RESOURCE_ROOT_DEFAULT.equals(o.getPid())) {
+		    		//封装树形数据一级结构
+		    		infoList.add(o);
+		    	} 
+		    }
+		}
+		loopChildList(resultList, infoList);
+		// 组织过滤后期待优化？
+        if (infoList.size() > 0) {
+        	info.rows = infoList;
+        } else {
+        	info.rows = resultList;
+        }
 
 		info.setErrorInfo(ErrorCodeEnum.CALL_SUCCESS);
 		return info;
@@ -125,19 +126,47 @@ public class ResourceService {
 			return false;
 		}
 	}
+	
+	/**
+	 * 更新
+	 * @param editVo
+	 * @return
+	 */
+	public boolean updateResource(ResourceVO editVo) {
+		// 校验？
+		ResourcePO record = editVo.toResourcePO();
+		if (StringUtils.isBlank(record.getResourceId())) {
+			throw new ServiceException("资源ID不能为空");
+		}
+		CurrentUserInfo redisUser = WebUtil.getRedisUser();
+		if (redisUser != null) {
+			record.setUpdator(redisUser.getAccount());
+		}
+		record.setUpdateTime(new Date());
+		int result = resourceMapper.updateByPrimaryKeySelective(record);
+		if (result > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public List<Tree> selectAllTree() {
-		// 获取所有的资源 tree形式，展示
-		List<Tree> trees = new ArrayList<Tree>();
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ResourcePO> resources =  resourceMapper.queryAll(map);
+		return listTree(resources);
+	}
+
+	// 获取所有的资源 tree形式，展示
+	private List<Tree> listTree(List<ResourcePO> resources) {
+		List<Tree> trees = new ArrayList<Tree>();
 		// 对数据进行处理
         if (resources != null && resources.size() > 0) {
             int len = resources.size();
             for (int i = 0; i < len; i++) {
                 ResourcePO po = resources.get(i);
                 // 第一轮先拿出主菜单
-                if (StringUtils.isBlank(po.getPid())) {
+                if (SystemConstant.RESOURCE_ROOT_DEFAULT.equals(po.getPid())) {
                     // 封装树形数据一级结构
                     Tree tree = new Tree();
                     tree.setId(po.getResourceId());
@@ -148,9 +177,8 @@ public class ResourceService {
             }
         }
         loopChilldTree(resources, trees);
-		return trees;
+        return trees;
 	}
-
 	private void loopChilldTree(List<ResourcePO> resultList, List<Tree> trees) {
         for (Tree m : trees) {
             String resourceId = m.getId();
@@ -225,4 +253,20 @@ public class ResourceService {
     		}
     	}
 	}
+
+	public Object treeResource(Map<String, Object> param) {
+		if (param == null) {
+			throw new ServiceException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		List<ResourcePO> pos = resourceMapper.queryAll(param);
+		return listTree(pos);
+	}
+
+	public ResourcePO queryResource(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			throw new ServiceException(ErrorCodeEnum.PARAM_IS_NULL);
+		}
+		return resourceMapper.selectByPrimaryKey(resourceId);
+	}
+
 }

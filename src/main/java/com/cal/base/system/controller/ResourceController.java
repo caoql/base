@@ -1,11 +1,17 @@
 package com.cal.base.system.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
@@ -16,8 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cal.base.SystemConstant;
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.system.entity.po.ResourcePO;
 import com.cal.base.system.entity.query.ResourceParam;
 import com.cal.base.system.entity.vo.ResourceVO;
 import com.cal.base.system.service.ResourceService;
@@ -117,4 +125,61 @@ public class ResourceController extends BaseController {
 		}
 		return renderSuccess("删除成功！");
     }
+    
+    /**
+     * 资源层级关系展示
+     * @param request
+     * @return
+     */
+    @GetMapping("/pidtree")
+    @ResponseBody
+    public Object pidtree(HttpServletRequest request) {
+        Map<String, Object> param = new HashMap<String, Object>();
+        // 有效资源
+        param.put("isEnabled", SystemConstant.IS_YES_INT);
+        List<String> types = new ArrayList<String>();
+        types.add("F");// 菜单组
+        types.add("A");// 页面
+        param.put("types", types);
+        return resourceService.treeResource(param);
+    }
+    
+    /**
+     * 编辑页展示
+     * @param model
+     * @param resourceId
+     * @return
+     */
+    @GetMapping("/editpage/{id}")
+    public String editpage(Model model,@PathVariable("id") String resourceId) {
+    	ResourcePO po = resourceService.queryResource(resourceId);
+    	model.addAttribute("resource", po);
+    	return "admin/resource/resourceEdit";
+    }
+    
+    /**
+     * 编辑资源
+     * @param editVo
+     * @param result
+     * @return
+     */
+    @PostMapping("/edit")
+	@ResponseBody
+	public Object updateResource(@Validated ResourceVO editVo, BindingResult result) {
+    	logger.debug("资源更新数据保存数据是：" + editVo);
+		// 框架层面的校验
+		if (result.hasErrors()) {
+			List<ObjectError> allErrors = result.getAllErrors();
+			StringBuffer sb = new StringBuffer();
+			for (ObjectError error : allErrors) {
+				sb.append(error.getDefaultMessage() + ", ");
+			}
+			throw new CommonException(sb.toString());
+		}
+		boolean flag = resourceService.updateResource(editVo);
+		if (!flag) {
+			return renderError("更新失败！");
+		}
+		return renderSuccess("更新成功！");
+	}
 }

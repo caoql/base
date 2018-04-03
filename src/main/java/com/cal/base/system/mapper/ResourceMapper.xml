@@ -217,7 +217,7 @@
 	</select>
 	
 	<!-- 遍历所有资源 -->
-	<select id="queryAll" resultMap="BaseResultMap">
+	<select id="queryAll" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
 		from system_resource
@@ -227,6 +227,15 @@
 			</if>
 			<if test="pid != null and pid != ''">
 				AND PID = #{pid}
+			</if>
+			<if test="isEnabled != null and isEnabled != ''">
+				AND IS_ENABLED = #{isEnabled}
+			</if>
+			<if test="_parameter.containsKey('types')">
+				AND TYPE IN
+				<foreach collection="types" item="type" open="(" close=")" separator=",">
+					#{type}
+				</foreach>
 			</if>
 		</where>
 	</select>

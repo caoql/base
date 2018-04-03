@@ -28,7 +28,7 @@ public class ResourcePO implements Serializable {
 
     private String pid;
 
-    private Boolean isEnabled;
+    private Short isEnabled;
 
     private String remark;
 
@@ -106,11 +106,11 @@ public class ResourcePO implements Serializable {
         this.pid = pid == null ? null : pid.trim();
     }
 
-    public Boolean getIsEnabled() {
+    public Short getIsEnabled() {
         return isEnabled;
     }
 
-    public void setIsEnabled(Boolean isEnabled) {
+    public void setIsEnabled(Short isEnabled) {
         this.isEnabled = isEnabled;
     }
 

@@ -222,7 +222,7 @@
 				title : '编辑',
 				width : 600,
 				height : 350,
-				href : '${path}/admin/user/editpage/' + id,
+				href : '${path}/admin/resource/editpage/' + id,
 				modal : true,
 				buttons : [ {
 					id : 'btn-save',
