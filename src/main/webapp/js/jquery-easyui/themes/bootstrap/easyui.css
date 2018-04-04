@@ -455,6 +455,11 @@
 .window-thinborder .window-body {
   border-width: 0px;
 }
+.window-thinborder .window-footer {
+  border-left: transparent;
+  border-right: transparent;
+  border-bottom: transparent;
+}
 .window-thinborder .window-header .panel-icon,
 .window-thinborder .window-header .panel-tool {
   margin-top: -9px;
@@ -800,6 +805,7 @@
   border-radius: 5px 5px 5px 5px;
 }
 .textbox .textbox-text {
+  font-size: 12px;
   border: 0;
   margin: 0;
   padding: 4px;
@@ -807,6 +813,9 @@
   vertical-align: top;
   outline-style: none;
   resize: none;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
 }
 .textbox .textbox-text::-ms-clear,
 .textbox .textbox-text::-ms-reveal {
@@ -815,7 +824,10 @@
 .textbox textarea.textbox-text {
   white-space: pre-wrap;
 }
-
+.textbox .textbox-prompt {
+  font-size: 12px;
+  color: #aaa;
+}
 .textbox .textbox-bgicon {
   background-position: 3px center;
   padding-left: 21px;
@@ -914,8 +926,8 @@
   box-shadow: 0 0 3px 0 #D4D4D4;
 }
 .textbox-invalid {
-  /*border-color: #ffa8a8;
-  background-color: #fff3f3;*/
+  border-color: #ffa8a8;
+  background-color: #fff3f3;
 }
 .passwordbox-open {
   background: url('images/passwordbox_open.png') no-repeat center center;
@@ -1090,7 +1102,6 @@
   font-size: 1px;
   cursor: pointer;
   z-index: 1;
-  display: none!important
 }
 .layout-expand .panel-header,
 .layout-expand .panel-body {
@@ -1221,14 +1232,14 @@
   border-bottom-width: 0;
   position: relative;
   padding: 0;
-  /*padding-top: 2px;*/
+  padding-top: 2px;
   overflow: hidden;
 }
 .tabs-scroller-left,
 .tabs-scroller-right {
   position: absolute;
   top: auto;
-  /*bottom: 0;*/
+  bottom: 0;
   width: 18px;
   font-size: 1px;
   display: none;
@@ -1535,7 +1546,7 @@
 }
 .tabs li a.tabs-inner:hover {
   background: #e6e6e6;
-  color: #777;
+  color: #00438a;
   filter: none;
 }
 .tabs li.tabs-selected a.tabs-inner {
@@ -1704,8 +1715,8 @@
 .datagrid-header {
   overflow: hidden;
   cursor: default;
-/*  border-width: 0 0 1px 0;
-  border-style: solid;*/
+  border-width: 0 0 1px 0;
+  border-style: solid;
 }
 .datagrid-header-inner {
   float: left;
@@ -1785,7 +1796,6 @@
   font-size: 1px;
   text-align: center;
   overflow: hidden;
-  line-height: 18px;
 }
 .datagrid-header-check input,
 .datagrid-cell-check input {
@@ -2347,7 +2357,6 @@
   color: #444;
 }
 .spinner-arrow {
-  background-color: #F2F2F2;
   display: inline-block;
   overflow: hidden;
   vertical-align: top;
@@ -2356,6 +2365,12 @@
   opacity: 1.0;
   filter: alpha(opacity=100);
   width: 18px;
+}
+.spinner-arrow.spinner-button-top,
+.spinner-arrow.spinner-button-bottom,
+.spinner-arrow.spinner-button-left,
+.spinner-arrow.spinner-button-right {
+  background-color: #F2F2F2;
 }
 .spinner-arrow-up,
 .spinner-arrow-down {
@@ -2369,18 +2384,27 @@
   height: 50%;
   color: #444;
   outline-style: none;
+  background-color: #F2F2F2;
 }
 .spinner-arrow-hover {
   background-color: #e6e6e6;
   opacity: 1.0;
   filter: alpha(opacity=100);
 }
+.spinner-button-top:hover,
+.spinner-button-bottom:hover,
+.spinner-button-left:hover,
+.spinner-button-right:hover,
 .spinner-arrow-up:hover,
 .spinner-arrow-down:hover {
   opacity: 1.0;
   filter: alpha(opacity=100);
   background-color: #e6e6e6;
 }
+.textbox-disabled .spinner-button-top:hover,
+.textbox-disabled .spinner-button-bottom:hover,
+.textbox-disabled .spinner-button-left:hover,
+.textbox-disabled .spinner-button-right:hover,
 .textbox-icon-disabled .spinner-arrow-up:hover,
 .textbox-icon-disabled .spinner-arrow-down:hover {
   opacity: 0.6;
@@ -2394,9 +2418,11 @@
 }
 .spinner-arrow-up {
   background: url('images/spinner_arrows.png') no-repeat 1px center;
+  background-color: #F2F2F2;
 }
 .spinner-arrow-down {
   background: url('images/spinner_arrows.png') no-repeat -15px center;
+  background-color: #F2F2F2;
 }
 .spinner-button-up {
   background: url('images/spinner_arrows.png') no-repeat -32px center;
@@ -2432,6 +2458,7 @@
   color: #333;
   font-size: 12px;
 }
+.progressbar-value,
 .progressbar-value .progressbar-text {
   background-color: #0081c2;
   color: #fff;
@@ -3212,6 +3239,62 @@
 .switchbutton-disabled,
 .switchbutton-readonly {
   cursor: default;
+}
+.radiobutton {
+  position: relative;
+  border: 2px solid #0070a9;
+  border-radius: 50%;
+}
+.radiobutton-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #0070a9;
+  border-radius: 50%;
+  transform: scale(.6);
+}
+.radiobutton-disabled {
+  opacity: 0.6;
+}
+.radiobutton-value {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  left: -999px;
+}
+.checkbox {
+  position: relative;
+  border: 2px solid #0070a9;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.checkbox-checked {
+  border: 0;
+  background: #0070a9;
+}
+.checkbox-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.checkbox path {
+  stroke-width: 2px;
+}
+.checkbox-disabled {
+  opacity: 0.6;
+}
+.checkbox-value {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  left: -999px;
 }
 .tabs-panels {
   border-color: transparent;

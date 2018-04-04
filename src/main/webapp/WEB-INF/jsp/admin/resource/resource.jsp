@@ -47,10 +47,8 @@
 				</tr>
 			</table>
 			<div class="form-button">
-				<a href="javascript:void(0);" class="easyui-linkbutton"
-					data-options="plain:true" onclick="searchFun();">查询</a> <a
-					href="javascript:void(0);" class="easyui-linkbutton"
-					data-options="plain:true" onclick="cleanFun();">清空</a>
+				<a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="searchFun();">查询</a> 
+				<a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" onclick="cleanFun();">清空</a>
 			</div>
 		</form>
 	</div>
@@ -65,10 +63,10 @@
 
 	<div id="toolbar" style="display: none;">
 		<shiro:hasPermission name="/admin/resource/add">
-		<a onclick="addResourceFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
+		<a onclick="addResourceFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加</a>
 		 </shiro:hasPermission>
-		 <a onclick="collapseAll();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">折叠所有</a>
-		 <a onclick="expandAll();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">展开所有</a>
+		 <a onclick="collapseAll();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock'">折叠所有</a>
+		 <a onclick="expandAll();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-more'">展开所有</a>
 	</div>
 
 	<!-- 弹窗区 -->
@@ -81,8 +79,6 @@
 				url : '${path}/admin/resource/list',
 				idField : 'resourceId',
 				striped : true,
-				fit: true,
-			    fitColumns: true,
 			    border: false,
 			    rownumbers: true,
 				treeField: 'name',

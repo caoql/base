@@ -38,6 +38,17 @@
 		</div>
     </div>
 	<!-- 中右边欢迎页Tab end -->
+	
+	<!-- Tab右键展示区 begin -->
+    <div id="mm" class="easyui-menu" style="width:150px;">
+		<div id="mm-tabclose">关闭</div>
+        <div id="mm-tabcloseall">关闭全部</div>
+        <div id="mm-tabcloseother">关闭其他</div>
+        <div class="menu-sep"></div>
+        <div id="mm-tabcloseright">关闭右侧标签</div>
+        <div id="mm-tabcloseleft">关闭左侧标签</div>
+    </div>
+    <!-- Tab右键展示区 end -->
 	<script type="text/javascript">
 		// 初始化函数執行
 		$(function(){
@@ -52,6 +63,10 @@
 					return false;
 				}
 			});
+			
+			//Tab鼠标右击事件绑定
+			bindTabEvent();
+			bindTabMenuEvent();
 			
 			// 退出
 			$('#btn-loginout').on('click', function() {
@@ -156,6 +171,89 @@
 					closable:true
 				});
 			}
+		}
+		
+		/**
+		 *绑定tab的双击事件、右键事件
+		 */
+		function bindTabEvent(){
+		    $(document).on('dblclick','.tabs-inner',function(){
+		        var subtitle = $(this).children("span").text();
+		        if($(this).next().is('.tabs-close')){
+		            $('#centerTab').tabs('close',subtitle);
+		        }
+		    });
+		    $(document).on('contextmenu','.tabs-inner',function(e){
+		        $('#mm').menu('show', {
+		            left: e.pageX,
+		            top: e.pageY
+		     });
+		     var subtitle =$(this).children("span").text();
+		     $('#mm').data("currtab",subtitle);
+		     $('#centerTab').tabs('select', subtitle);
+		     return false;
+		    });
+		 }
+		
+		//绑定tab右键菜单事件
+		function bindTabMenuEvent() {
+		    //关闭当前
+		    $('#mm-tabclose').click(function() {
+		        var currtab_title = $('#mm').data("currtab");
+		        if (currtab_title!="欢迎页面") {
+		            $('#centerTab').tabs('close', currtab_title);
+		        }
+		    });
+		    //全部关闭
+		    $('#mm-tabcloseall').click(function() {
+		        $('.tabs-inner span').each(function(i, n) {
+		        	 iscloselog=true;
+		            if ($(this).parent().next().is('.tabs-close')) {
+		                var t = $(n).text();
+		                $('#centerTab').tabs('close', t);
+		            }
+		        });
+		    });
+		    //关闭除当前之外的TAB
+		    $('#mm-tabcloseother').click(function() {
+		        var currtab_title = $('#mm').data("currtab");
+		        $('.tabs-inner span').each(function(i, n) {
+		        	 iscloselog=true;
+		            if ($(this).parent().next().is('.tabs-close')) {
+		                var t = $(n).text();
+		                if (t != currtab_title)
+		                    $('#centerTab').tabs('close', t);
+		            }
+		        });
+		    });
+		    //关闭当前右侧的TAB
+		    $('#mm-tabcloseright').click(function() {
+		        var nextall = $('.tabs-selected').nextAll();
+		        if (nextall.length == 0) {
+		            return false;
+		        }
+		        nextall.each(function(i, n) {
+		            if ($('a.tabs-close', $(n)).length > 0) {
+		                var t = $('a:eq(0) span', $(n)).text();
+		                $('#centerTab').tabs('close', t);
+		            }
+		        });
+		        return false;
+		    });
+		    //关闭当前左侧的TAB
+		    $('#mm-tabcloseleft').click(function() {
+		        var prevall = $('.tabs-selected').prevAll();
+		        if (prevall.length == 1) {
+		            return false;
+		        }
+		        prevall.each(function(i, n) {
+		            if ($('a.tabs-close', $(n)).length > 0) {
+		                var t = $('a:eq(0) span', $(n)).text();
+		                $('#centerTab').tabs('close', t);
+		            }
+		        });
+		        return false;
+		    });
 		}
 	</script>
 </body>

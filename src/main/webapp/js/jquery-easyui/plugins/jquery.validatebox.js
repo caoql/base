@@ -1,7 +1,7 @@
 /**
- * jQuery EasyUI 1.5.2
- *
- * Copyright (c) 2009-2017 www.jeasyui.com. All rights reserved.
+ * EasyUI for jQuery 1.5.4.4
+ * 
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -278,7 +278,7 @@ $.fn.validatebox.parseOptions=function(_3d){
 var t=$(_3d);
 return $.extend({},$.parser.parseOptions(_3d,["validType","missingMessage","invalidMessage","tipPosition",{delay:"number",interval:"number",deltaX:"number"},{editable:"boolean",validateOnCreate:"boolean",validateOnBlur:"boolean"}]),{required:(t.attr("required")?true:undefined),disabled:(t.attr("disabled")?true:undefined),readonly:(t.attr("readonly")?true:undefined),novalidate:(t.attr("novalidate")!=undefined?true:undefined)});
 };
-$.fn.validatebox.defaults={required:false,validType:null,validParams:null,delay:200,interval:200,missingMessage:"!",invalidMessage:null,tipPosition:"right",deltaX:0,deltaY:0,novalidate:false,editable:true,disabled:false,readonly:false,validateOnCreate:true,validateOnBlur:false,events:{focus:_a,blur:_f,mouseenter:_13,mouseleave:_16,click:function(e){
+$.fn.validatebox.defaults={required:false,validType:null,validParams:null,delay:200,interval:200,missingMessage:"This field is required.",invalidMessage:null,tipPosition:"right",deltaX:0,deltaY:0,novalidate:false,editable:true,disabled:false,readonly:false,validateOnCreate:true,validateOnBlur:false,events:{focus:_a,blur:_f,mouseenter:_13,mouseleave:_16,click:function(e){
 var t=$(e.data.target);
 if(t.attr("type")=="checkbox"||t.attr("type")=="radio"){
 t.focus().validatebox("validate");
@@ -307,3 +307,4 @@ return _49=="true";
 },onValidate:function(_4a){
 }};
 })(jQuery);
+

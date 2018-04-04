@@ -6,6 +6,21 @@
 <head>
 <%@ include file="../../common/base.jsp" %>
 <title>用户管理界面</title>
+	<!-- 数据表格行编剧设置 -->
+	<style type="text/css">
+		.lines-both .datagrid-body td{
+		}
+		.lines-no .datagrid-body td{
+			border-right:2px dotted transparent;
+			border-bottom:2px dotted transparent;
+		}
+		.lines-right .datagrid-body td{
+			border-bottom:2px dotted transparent;
+		}
+		.lines-bottom .datagrid-body td{
+			border-right:2px dotted transparent;
+		}
+	</style>
 </head>
 <body>
 <!-- 查询条件展示区域  begin-->
@@ -18,8 +33,8 @@
 			</tr>
 		</table>
 		 <div class="form-button">
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="searchUserFun();">查询</a>
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="cleanUserFun();">清空</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="searchUserFun();">查询</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" onclick="cleanUserFun();">清空</a>
         </div>
 	</form>
 </div>
@@ -27,16 +42,16 @@
 
 <!-- 数据展示 begin -->
 <div class="easyui-layout" data-options="fit:true,border:false">
-    <table id="datagrid" class="easyui-datagrid" title="用户界面">
+    <table id="datagrid" class="easyui-datagrid">
 	</table>
 </div>
 <!-- 数据展示 end -->
 
 <div id="toolbar" style="display: none;">
-	<shiro:hasPermission name="/admin/user/add"><a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a></shiro:hasPermission>
-	<shiro:hasPermission name="/admin/user/export"><a onclick="exportUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导出</a></shiro:hasPermission>
-	<shiro:hasPermission name="/admin/user/download"><a onclick="downloadUserTemplet();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">导入模板下载</a></shiro:hasPermission>
-	<shiro:hasPermission name="/admin/user/import"><a onclick="batchImport();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">批量导入</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/add"><a onclick="addUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/export"><a onclick="exportUserFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">导出</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/download"><a onclick="downloadUserTemplet();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">导入模板下载</a></shiro:hasPermission>
+	<shiro:hasPermission name="/admin/user/import"><a onclick="batchImport();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">批量导入</a></shiro:hasPermission>
 </div>
 
 <!-- 弹窗区 -->
@@ -49,15 +64,20 @@
     $(function() {
        userDataGrid = $('#datagrid').datagrid({
             url : '${path}/admin/user/list',
-            fit : true,
+            idField : 'userId',
             striped : true,
             rownumbers : true,
-            pagination : true,
-            singleSelect : true,
-            idField : 'userId',
-            pageSize : 20,
-            pageList : [ 20,30,50,100],
             fitColumns: true,
+            loadMsg:"数据正在获取中，请稍后...",
+            collapsible: true,
+            rowStyler: function(index,row){
+				if (row.listprice < 30){
+					return 'background-color:#6293BB;color:#fff;font-weight:bold;';
+				}
+			},
+            pagination : true,
+            pageSize : 20,
+            pageList : [20,30,50,100],
             // 固定的列
             frozenColumns: [[{
                 field : 'action',
@@ -67,15 +87,15 @@
                 formatter : function(value, row, index) {
                     var str = '';
 					<shiro:hasPermission name="/admin/user/bindrole">
-					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-bind" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="bindRoleFun(\'{0}\');" >绑定角色</a>', row.userId);
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-bind" data-options="plain:true,iconCls:\'icon-tip\'" onclick="bindRoleFun(\'{0}\');" >绑定角色</a>', row.userId);
 					</shiro:hasPermission>
 					<shiro:hasPermission name="/admin/user/edit">  	
 					      str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'icon-edit\'" onclick="editUserFun(\'{0}\');" >编辑</a>', row.userId);
 					</shiro:hasPermission>
 					<shiro:hasPermission name="/admin/user/delete">
 					      str += '&nbsp;|&nbsp;';
-					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-x icon-red\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
+					      str += $.formatString('<a href="javascript:void(0)" class="user-easyui-linkbutton-del" data-options="plain:true,iconCls:\'icon-clear\'" onclick="deleteUserFun(\'{0}\');" >删除</a>', row.userId);
 					</shiro:hasPermission>
                     return str;
                 }

@@ -18,8 +18,8 @@
 			</tr>
 		</table>
 		 <div class="form-button">
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="searchFun();">查询</a>
-            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true" onclick="cleanFun();">清空</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="searchFun();">查询</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" onclick="cleanFun();">清空</a>
         </div>
 	</form>
 </div>
@@ -27,14 +27,14 @@
 
 <!-- 数据展示 begin -->
 <div class="easyui-layout" data-options="fit:true,border:false">
-    <table id="datagrid" class="easyui-datagrid" title="角色界面">
+    <table id="datagrid" class="easyui-datagrid">
 	</table>
 </div>
 <!-- 数据展示 end -->
 
 <div id="toolbar" style="display: none;">
     <shiro:hasPermission name="/admin/role/add">
-        <a onclick="addRoleFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'fi-plus icon-green'">添加</a>
+        <a onclick="addRoleFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加</a>
     </shiro:hasPermission>
 </div>
 
@@ -47,15 +47,14 @@
     $(function() {
        roleDataGrid = $('#datagrid').datagrid({
             url : '${path}/admin/role/list',
-            fit : true,
+            idField : 'roleId',
             striped : true,
             rownumbers : true,
+            fitColumns:true,
             pagination : true,
             singleSelect : true,
-            idField : 'roleId',
             pageSize : 20,
             pageList : [ 20,30,50,100],
-            fitColumns: true,
             // 列对象
             columns : [ [{
                 field : 'action',
@@ -65,15 +64,15 @@
                 formatter : function(value, row, index) {
                     var str = '';
                     <shiro:hasPermission name="/admin/role/grant">
-                   		str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-grant" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
+                   		str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-grant" data-options="plain:true,iconCls:\'icon-tip\'" onclick="grantFun(\'{0}\');" >授权</a>', row.roleId);
                    	</shiro:hasPermission>
                    	<shiro:hasPermission name="/admin/role/edit">
 	               	    str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-	           			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="editRoleFun(\'{0}\');" >编辑</a>', row.roleId);
+	           			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-edit" data-options="plain:true,iconCls:\'icon-edit\'" onclick="editRoleFun(\'{0}\');" >编辑</a>', row.roleId);
 	           		</shiro:hasPermission>
                    	<shiro:hasPermission name="/admin/role/delete">
                    	    str += '&nbsp;&nbsp;|&nbsp;&nbsp;';
-               			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-del" data-options="plain:true,iconCls:\'fi-pencil icon-blue\'" onclick="delFun(\'{0}\');" >删除</a>', row.roleId);
+               			str += $.formatString('<a href="javascript:void(0)" class="role-easyui-linkbutton-del" data-options="plain:true,iconCls:\'icon-clear\'" onclick="delFun(\'{0}\');" >删除</a>', row.roleId);
                		</shiro:hasPermission>
                     return str;
                 }
@@ -118,7 +117,8 @@
                 width : '180',
                 title : '备注',
                 field : 'remark',
-                align: 'center'
+                align: 'center',
+                hidden: true
             }] ],
             onLoadSuccess:function(data){
                 $('.role-easyui-linkbutton-grant').linkbutton({text:'授权'});
