@@ -17,6 +17,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
@@ -91,7 +92,8 @@ public class WebUtil extends org.springframework.web.util.WebUtils {
 
 	// 获取到当前请求的request对象
 	public static HttpServletRequest getCurrentRequest() {
-		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		RequestAttributes ra =  RequestContextHolder.getRequestAttributes();
+		return ((ServletRequestAttributes)ra).getRequest();
 	}
 
 	// 获取客户端IP

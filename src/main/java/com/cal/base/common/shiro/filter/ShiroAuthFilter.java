@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.UserFilter;
+import org.apache.shiro.web.filter.authc.AuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 
 import com.cal.base.common.enums.ErrorCodeEnum;
@@ -27,7 +27,7 @@ import com.cal.base.common.util.web.WebUtil;
  * @author andyc 2018-4-3
  *
  */
-public class ShiroAuthFilter extends UserFilter {
+public class ShiroAuthFilter extends AuthenticationFilter {
 	 private static List<String> ignoreUrls = new ArrayList<String>();
 	 static {
 		 ignoreUrls.add("/login.jsp");
@@ -41,30 +41,14 @@ public class ShiroAuthFilter extends UserFilter {
      */
     private Logger logger = Logger.getLogger(getClass());
     
-	@Override
-	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-		HttpServletRequest req = WebUtils.toHttp(request);
-		String xmlHttpRequest = req.getHeader("X-Requested-With");
-		if (StringUtils.isNotBlank(xmlHttpRequest)) {
-			if (xmlHttpRequest.equalsIgnoreCase("XMLHttpRequest")) {
-				HttpServletResponse res = WebUtils.toHttp(response);
-				// 采用res.sendError(401);在Easyui中会处理掉error，$.ajaxSetup中监听不到
-				res.setHeader("oauthstatus", "401");
-				return false;
-			}
-		}
-		return super.onAccessDenied(request, response);
-	}
-
 	/**
 	 * 
 	 */
 	@Override
-	protected boolean isAccessAllowed(ServletRequest request,
-			ServletResponse response, Object mappedValue) {
-/*		logger.debug("===========ShiroAuthFilter.isAccessAllowed=========" + WebUtil.getRequestUri());
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+		 logger.debug("===========ShiroAuthFilter.isAccessAllowed=========" + WebUtil.getRequestUri());
 		Subject subject = SecurityUtils.getSubject();
-        String uri = WebUtil.getRequestUri();
+         String uri = WebUtil.getRequestUri();
         CurrentUserInfo user = WebUtil.getRedisUser();
         if ((user == null) || (!subject.isAuthenticated())) {
             try {
@@ -93,10 +77,23 @@ public class ShiroAuthFilter extends UserFilter {
                     throw new  CommonException(ErrorCodeEnum.AUTH_ERROR);
                 }
             }
-        }*/
+        }
 		return super.isAccessAllowed(request, response, mappedValue);
 	}
-	
-	
 
+	@Override
+	protected boolean onAccessDenied(ServletRequest request,
+			ServletResponse response) throws Exception {
+		HttpServletRequest req = WebUtils.toHttp(request);
+		String xmlHttpRequest = req.getHeader("X-Requested-With");
+		if (StringUtils.isNotBlank(xmlHttpRequest)) {
+			if (xmlHttpRequest.equalsIgnoreCase("XMLHttpRequest")) {
+				HttpServletResponse res = WebUtils.toHttp(response);
+				// 采用res.sendError(401);在Easyui中会处理掉error，$.ajaxSetup中监听不到
+				res.setHeader("oauthstatus", "401");
+				return false;
+			}
+		}
+		return true;
+	}
 }

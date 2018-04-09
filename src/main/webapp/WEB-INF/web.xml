@@ -14,6 +14,9 @@
 	</context-param>
 	
 	<listener>
+		<!-- request监听 ，让服务器启动时就初始化改类RequestContextListener，可以得到request（((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest()）-->
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+		<!-- 开启spring监听功能 -->
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
@@ -35,6 +38,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+	<!-- Filter是过滤器，interceptor是拦截器。前者基于回调函数实现，必须依靠容器支持。因为需要容器装配好整条FilterChain并逐个调用。后者基于代理实现，属于AOP的范畴。 -->
 	<!--权限控制Shiro过滤器 -->
 	 <!-- 配置Shiro过滤器,先让Shiro过滤系统接收到的请求 -->  
 	<!-- 这里filter-name必须对应applicationContext-shiro.xml中定义的<bean id="shiroFilter"/> -->  

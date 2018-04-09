@@ -36,8 +36,7 @@ import com.cal.base.system.service.UserService;
  */
 public class ShiroDbRealm extends AuthorizingRealm {
 	// 日志记录器
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShiroDbRealm.class);
+	private static final Logger logger = LoggerFactory.getLogger(ShiroDbRealm.class);
 
 	// 注入用户Service
 	@Autowired
@@ -56,20 +55,27 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	}
 
 	/**
-	 * Shiro登录认证(原理：用户提交 用户名和密码 --- shiro 封装令牌 ---- realm 通过用户名将密码查询返回 ----
-	 * shiro 自动去比较查询出密码和用户输入密码是否一致 ---- 进行登陆控制 )
+	 * 提供账户信息返回认证信息
+	 * AuthenticationInfo代表了用户的角色信息集合
 	 */
 	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(
-			AuthenticationToken authcToken) throws AuthenticationException {
-		logger.info("Shiro开始登录认证");
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
+		logger.debug("Shiro开始登录认证");
+		// 转化为登录时创建的令牌类型
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-		List<UserPO> list = userService.selectByLoginName(token.getUsername());
-		// 账号不存在
+		// 登录用户名
+		String username = (String) token.getPrincipal();
+		// 数据库查询验证
+		List<UserPO> list = userService.selectByLoginName(username);
 		if (list == null || list.isEmpty()) {
+			// 用户名不存在抛出异常
 			throw new UnknownAccountException();
 		}
-		// 默认取第一个用户的信息对比
+		if (list.size() > 1) {
+			// 存在多个账号
+			throw new UnknownAccountException("存在多个账号");
+		}
+		// 取第一个用户的信息对比
 		UserPO user = list.get(0);
 		// 账号未启用
 		if (user.getIsEnabled() != 1) {
@@ -81,17 +87,17 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			throw new IncorrectCredentialsException();
 		}
 		// 读取用户的url和角色
-		Map<String, Set<String>> resourceMap = roleService
-				.selectResourceMapByUserId(user.getUserId());
+		Map<String, Set<String>> resourceMap = roleService.selectResourceMapByUserId(user.getUserId());
 		Set<String> urls = resourceMap.get("urls");
 		Set<String> roles = resourceMap.get("roles");
-		ShiroUser shiroUser = new ShiroUser(user.getUserId(),
-				user.getAccount(), user.getName(), urls);
+		
+		ShiroUser shiroUser = new ShiroUser(user.getUserId(), user.getAccount(), user.getName(), urls);
 		shiroUser.setRoles(roles); // 认证缓存信息 
 		return new SimpleAuthenticationInfo(shiroUser, user.getPassword().toCharArray(), getName());
 	}
 
 	/**
+	 * AuthorizationInfo代表了角色的权限信息集合
 	 * Shiro权限认证
 	 */
 	@Override
