@@ -1,6 +1,5 @@
 package com.cal.base.common.shiro;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -18,25 +17,24 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.cal.base.SystemConstant;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.service.RoleService;
 import com.cal.base.system.service.UserService;
 
 /**
- * @description Realm：可以有1个或多个Realm，可以认为是安全实体数据源，即用于获取安全实体的；
- *              可以是JDBC实现，也可以是LDAP实现
- *              ，或者内存实现等等；由用户提供；注意：Shiro不知道你的用户/权限存储在哪及以何种格式存储；
- *              所以我们一般在应用中都需要实现自己的Realm；
+ * @description Realm：安全实体数据源，即用于获取安全实体的；
+ * 
  * @author：andyC 2018-3-15
  */
 public class ShiroDbRealm extends AuthorizingRealm {
 	// 日志记录器
-	private static final Logger logger = LoggerFactory.getLogger(ShiroDbRealm.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ShiroDbRealm.class);
 
 	// 注入用户Service
 	@Autowired
@@ -55,59 +53,52 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	}
 
 	/**
-	 * 提供账户信息返回认证信息
-	 * AuthenticationInfo代表了用户的角色信息集合
+	 * 提供账户信息返回认证信息 AuthenticationInfo代表了用户的角色信息集合
 	 */
 	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
-		logger.debug("Shiro开始登录认证");
+	protected AuthenticationInfo doGetAuthenticationInfo(
+			AuthenticationToken authcToken) throws AuthenticationException {
+		logger.debug("Shiro开始登录认证...");
 		// 转化为登录时创建的令牌类型
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
 		// 登录用户名
 		String username = (String) token.getPrincipal();
 		// 数据库查询验证
-		List<UserPO> list = userService.selectByLoginName(username);
-		if (list == null || list.isEmpty()) {
+		UserPO user = userService.selectByLoginName(username);
+		if (user == null) {
 			// 用户名不存在抛出异常
 			throw new UnknownAccountException();
 		}
-		if (list.size() > 1) {
-			// 存在多个账号
-			throw new UnknownAccountException("存在多个账号");
-		}
-		// 取第一个用户的信息对比
-		UserPO user = list.get(0);
 		// 账号未启用
-		if (user.getIsEnabled() != 1) {
+		if (!Objects.equals(user.getIsEnabled(), SystemConstant.IS_YES_SHORT)) {
 			throw new DisabledAccountException();
 		}
 		// 密码不相等
-		if (!Objects
-				.equals(new String(token.getPassword()), user.getPassword())) {
+		if (!Objects.equals(new String(token.getPassword()), user.getPassword())) {
 			throw new IncorrectCredentialsException();
 		}
-		// 读取用户的url和角色
-		Map<String, Set<String>> resourceMap = roleService.selectResourceMapByUserId(user.getUserId());
-		Set<String> urls = resourceMap.get("urls");
-		Set<String> roles = resourceMap.get("roles");
-		
-		ShiroUser shiroUser = new ShiroUser(user.getUserId(), user.getAccount(), user.getName(), urls);
-		shiroUser.setRoles(roles); // 认证缓存信息 
-		return new SimpleAuthenticationInfo(shiroUser, user.getPassword().toCharArray(), getName());
+
+		return new SimpleAuthenticationInfo(user.getUserId(),
+				token.getCredentials(), getName());
 	}
 
 	/**
-	 * AuthorizationInfo代表了角色的权限信息集合
-	 * Shiro权限认证
+	 * AuthorizationInfo代表了角色的权限信息集合 Shiro权限认证
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(
 			PrincipalCollection principals) {
-		ShiroUser shiroUser = (ShiroUser) principals.getPrimaryPrincipal();
+		logger.debug("Shiro开始授权认证...");
+		String userId = (String) principals.getPrimaryPrincipal();
+		// 读取用户的url和角色
+		Map<String, Set<String>> resourceMap = roleService
+				.selectResourceMapByUserId(userId);
+		Set<String> urls = resourceMap.get("urls");
+		Set<String> roles = resourceMap.get("roles");
 
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		info.setRoles(shiroUser.getRoles());
-		info.addStringPermissions(shiroUser.getUrlSet());
+		info.setRoles(roles);
+		info.addStringPermissions(urls);
 
 		return info;
 	}
@@ -115,27 +106,5 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Override
 	public void onLogout(PrincipalCollection principals) {
 		super.clearCachedAuthorizationInfo(principals);
-		ShiroUser shiroUser = (ShiroUser) principals.getPrimaryPrincipal();
-		removeUserCache(shiroUser);
-	}
-
-	/**
-	 * 清除用户缓存
-	 * 
-	 * @param shiroUser
-	 */
-	public void removeUserCache(ShiroUser shiroUser) {
-		removeUserCache(shiroUser.getLoginName());
-	}
-
-	/**
-	 * 清除用户缓存
-	 * 
-	 * @param loginName
-	 */
-	public void removeUserCache(String loginName) {
-		SimplePrincipalCollection principals = new SimplePrincipalCollection();
-		principals.add(loginName, super.getName());
-		super.clearCachedAuthenticationInfo(principals);
 	}
 }

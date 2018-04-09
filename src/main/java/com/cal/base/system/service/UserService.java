@@ -136,7 +136,7 @@ public class UserService {
 	}
 
 	
-	public List<UserPO> selectByLoginName(String username) {
+	public UserPO selectByLoginName(String username) {
 		if (username == null) {
 			throw new ServiceException("username不能为空");
 		}

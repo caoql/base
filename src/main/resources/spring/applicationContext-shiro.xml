@@ -26,6 +26,7 @@
 				/templet/** = anon
 				/favicon.ico =anon
 				/login.jsp = anon
+				/login = anon
 				/** = authc
 			</value>
 		</property>

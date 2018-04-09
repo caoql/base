@@ -28,7 +28,7 @@ public interface UserMapper {
     // 用戶管理界面数据展示
 	List<UserListDTO> listAll(UserParam param);
 
-	List<UserPO> selectByLoginName(String username);
+	UserPO selectByLoginName(String username);
 
 	// 通过用户信息获取资源列表
 	List<Map<String, Object>> getResources(String userId);
