@@ -14,10 +14,8 @@
 	<mvc:annotation-driven validator="validator" />
 
 	<!-- 校验器，配置validator -->
-	<bean id="validator"
-		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
 		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
-		<property name="validationMessageSource" ref="validationMessageSource"></property>
 	</bean>
 
 	<!-- 配置validationMessageSource -->

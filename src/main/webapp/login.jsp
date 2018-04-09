@@ -62,9 +62,6 @@
 				url: _contextPath + "/login",
 				data: {"username":username,"password":password},
 				success: function(data) {
-					if ((typeof data) === "string"){
-						var data = JSON.parse(data);
-					}
 					if ( data != null && data.code == 0){
 						 window.location.href = _contextPath + '/index';
 					}  else {

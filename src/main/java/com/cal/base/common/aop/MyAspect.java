@@ -3,8 +3,6 @@ package com.cal.base.common.aop;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,14 +10,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cal.base.common.annotation.SystemActionLog;
 import com.cal.base.common.exception.CommonException;
-
-import eu.bitwalker.useragentutils.UserAgent;
 
 /**
  * 声明切面

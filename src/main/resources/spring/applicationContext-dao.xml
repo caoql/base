@@ -8,8 +8,7 @@
         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 	<!-- 扫描配置文件 -->
 	<!-- ignore-unresolvable="true"必须，不然别的配置文件引入配置报错 -->
-	<context:property-placeholder location="classpath:jdbc.properties"
-		ignore-unresolvable="true" />
+	<context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true" />
 
 	<!-- 数据源 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"

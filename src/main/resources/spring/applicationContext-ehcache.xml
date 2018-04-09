@@ -20,8 +20,4 @@
 		<property name="cacheManager" ref="ehcacheManager"/>
 		<property name="transactionAware" value="true"/>
 	</bean>
-
-	<!-- cache注解，和spring-redis.xml中的只能使用一个 -->
-	<!--  <cache:annotation-driven cache-manager="cacheManager"
-		proxy-target-class="true"/>-->
 </beans>
