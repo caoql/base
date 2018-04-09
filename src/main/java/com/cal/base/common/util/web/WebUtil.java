@@ -29,10 +29,8 @@ import com.cal.base.common.info.CurrentUserInfo;
 
 public class WebUtil extends org.springframework.web.util.WebUtils {
 	public static String getUserId() {
-		HttpServletRequest request = getCurrentRequest();
-		String cookieValue = CookieUtil.getCookieValueByName(request,
-				Constant.TMS_LOGIN);
-		return LoginCookieDto.buildDto(cookieValue).getUserId();
+		CurrentUserInfo user = getRedisUser();
+		return user.getUserId();
 	}
 
 	// 获取当前的会话的sessionId

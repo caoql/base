@@ -78,8 +78,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			throw new IncorrectCredentialsException();
 		}
 
-		return new SimpleAuthenticationInfo(user.getUserId(),
-				token.getCredentials(), getName());
+		return new SimpleAuthenticationInfo(user.getUserId(), token.getCredentials(), getName());
 	}
 
 	/**

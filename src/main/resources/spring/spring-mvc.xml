@@ -61,4 +61,14 @@
 		<!-- 内存中的最大值 -->
 		<property name="maxInMemorySize" value="40960" />
 	</bean>
+	
+	<!-- Shiro:java注解控制权限,这是隐式角色权限控制，需要硬编码在java代码中，不够友好-->
+	<!-- <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor" />
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"></property>
+	</bean> -->
 </beans>

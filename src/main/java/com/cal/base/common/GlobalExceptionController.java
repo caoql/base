@@ -1,6 +1,7 @@
 package com.cal.base.common;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -85,6 +86,21 @@ public class GlobalExceptionController {
       }
       
       /**
+       * 
+       * @param e
+       * @return
+       * @throws Exception
+       */
+      @ExceptionHandler(value = AuthorizationException.class)
+      public ResponseInfo processException(AuthorizationException e) throws Exception {
+    	   log.error(e.getMessage(), e);
+          final ResponseInfo response = new ResponseInfo();
+          response.code = 500;
+          response.msg = "没有角色权限";
+          return response;
+      }
+      
+      /**
        * 超级异常-服务器异常
        * @param e
        * @return
@@ -98,4 +114,5 @@ public class GlobalExceptionController {
            response.msg = e.getMessage();
            return response;
        }
+   
 }

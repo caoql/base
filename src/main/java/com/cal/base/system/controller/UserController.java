@@ -3,6 +3,7 @@ package com.cal.base.system.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.ResponsePageInfo;
 import com.cal.base.common.util.file.FileUtil;
 import com.cal.base.common.util.idgen.UUIDUtil;
+import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.entity.query.UserParam;
 import com.cal.base.system.entity.vo.UserRoleVO;
@@ -191,7 +193,6 @@ public class UserController extends BaseController {
 	 * @param result
 	 * @return
 	 */
-	// @RequiresRoles("admin")
 	@PostMapping("/edit")
 	@ResponseBody
 	public Object updateUser(@Validated UserVO editVo, BindingResult result) {
@@ -223,14 +224,13 @@ public class UserController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	// @RequiresRoles("admin")
 	@DeleteMapping("/delete/{id}")
 	@ResponseBody
 	public Object delete(@PathVariable("id") String userId) {
-		/*
-		 * Long currentUserId = getUserId(); if (id == currentUserId) { return
-		 * renderError("不可以删除自己！"); }
-		 */
+		String currentUserId = WebUtil.getUserId(); 
+		if (Objects.equals(currentUserId, userId)) {
+			return renderError("不可以删除自己！"); 
+		}
 		boolean flag = userService.deleteByPrimaryKey(userId);
 		if (!flag) {
 			return renderError("删除失败！");
