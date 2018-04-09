@@ -98,10 +98,11 @@
 	</bean>
 
 	<!-- shiro密码加密配置 ，交给凭证匹配器 -->
-	<bean id="passwordHash" class="com.cal.base.common.shiro.PasswordHash">
-		<!-- 密码加密 1次md5,增强密码可修改此处 -->
-		<property name="algorithmName" value="md5" />
+	<bean id="passwordHash" class="com.cal.base.common.shiro.encryption.PasswordHash">
+		<!-- 密码加密 1次SHA-256,增强密码可修改此处 -->
+		<property name="algorithmName" value="SHA-256" />
 		<property name="hashIterations" value="1" />
 	</bean>
 
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
 </beans>

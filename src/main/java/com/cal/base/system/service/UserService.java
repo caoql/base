@@ -147,11 +147,12 @@ public class UserService {
 	/**
 	 * 通过主键用户ID删除用户
 	 */
-	
+	@Transactional
 	public boolean deleteByPrimaryKey(String userId) {
 		if (StringUtils.isBlank(userId)) {
 			throw new ServiceException("用户ID不能为空");
 		}
+		userRoleMapper.deleteByUserId(userId);
 		int result = userMapper.deleteByPrimaryKey(userId);
 		// 清除缓存
 		String userRedisKey = SystemConstant.REDIS_USER_PRE + userId;

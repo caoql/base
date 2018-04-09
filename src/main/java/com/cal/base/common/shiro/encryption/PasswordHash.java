@@ -1,9 +1,7 @@
-package com.cal.base.common.shiro;
+package com.cal.base.common.shiro.encryption;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-
-import com.cal.base.common.util.DigestUtils;
 
 
 /**
@@ -11,22 +9,11 @@ import com.cal.base.common.util.DigestUtils;
  *
  */
 public class PasswordHash implements InitializingBean {
+	// 摘要算法名称
 	private String algorithmName;
+	// 加密次数
 	private int hashIterations;
 
-	public String getAlgorithmName() {
-		return algorithmName;
-	}
-	public void setAlgorithmName(String algorithmName) {
-		this.algorithmName = algorithmName;
-	}
-	public int getHashIterations() {
-		return hashIterations;
-	}
-	public void setHashIterations(int hashIterations) {
-		this.hashIterations = hashIterations;
-	}
-	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.hasLength(algorithmName, "algorithmName mast be MD5、SHA-1、SHA-256、SHA-384、SHA-512");
@@ -34,5 +21,21 @@ public class PasswordHash implements InitializingBean {
 	
 	public String toHex(Object source, Object salt) {
 		return DigestUtils.hashByShiro(algorithmName, source, salt, hashIterations);
+	}
+	
+	public String getAlgorithmName() {
+		return algorithmName;
+	}
+	
+	public void setAlgorithmName(String algorithmName) {
+		this.algorithmName = algorithmName;
+	}
+	
+	public int getHashIterations() {
+		return hashIterations;
+	}
+	
+	public void setHashIterations(int hashIterations) {
+		this.hashIterations = hashIterations;
 	}
 }

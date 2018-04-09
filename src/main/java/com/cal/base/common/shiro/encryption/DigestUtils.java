@@ -1,4 +1,4 @@
-package com.cal.base.common.util;
+package com.cal.base.common.shiro.encryption;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 

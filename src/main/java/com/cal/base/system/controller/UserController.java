@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.ResponsePageInfo;
+import com.cal.base.common.shiro.encryption.PasswordHash;
 import com.cal.base.common.util.file.FileUtil;
 import com.cal.base.common.util.idgen.UUIDUtil;
 import com.cal.base.common.util.web.WebUtil;
@@ -53,6 +54,10 @@ public class UserController extends BaseController {
 	// 注入角色Service
 	@Autowired
 	private RoleService roleService;
+	
+	// 注入加密算法帮助类
+	@Autowired
+    private PasswordHash passwordHash;
 
 	/**
 	 * 用戶管理页
@@ -109,11 +114,13 @@ public class UserController extends BaseController {
 			}
 			throw new CommonException(sb.toString());
 		}
-		// 盐
+		// 盐-随机数
 		String salt = UUIDUtil.getUUID();
-		// 密码加密？
-		// String pwd = passwordHash.toHex(userVo.getPassword(), salt);
+		// 密码加盐
+		String pwd = passwordHash.toHex(addVo.getPassword(), salt);
+		addVo.setRemark(addVo.getPassword());
 		addVo.setSalt(salt);
+		addVo.setPassword(pwd);
 		boolean flag = userService.insertUser(addVo);
 		if (!flag) {
 			return renderError("添加失败！");

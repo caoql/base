@@ -195,6 +195,9 @@
 			<if test="password != null">
 				PASSWORD,
 			</if>
+			<if test="salt != null">
+				SALT,
+			</if>
 			<if test="phone != null">
 				PHONE,
 			</if>
@@ -238,6 +241,9 @@
 			</if>
 			<if test="password != null">
 				#{password},
+			</if>
+			<if test="salt != null">
+				#{salt},
 			</if>
 			<if test="phone != null">
 				#{phone},

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cal.base.SystemConstant;
+import com.cal.base.common.shiro.encryption.PasswordHash;
 import com.cal.base.system.entity.po.UserPO;
 import com.cal.base.system.service.RoleService;
 import com.cal.base.system.service.UserService;
@@ -44,6 +45,10 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Autowired
 	private RoleService roleService;
 
+	// 注入加密算法帮助类
+	@Autowired
+    private PasswordHash passwordHash;
+		
 	public ShiroDbRealm(CacheManager cacheManager) {
 		super(cacheManager);
 	}
@@ -73,8 +78,10 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		if (!Objects.equals(user.getIsEnabled(), SystemConstant.IS_YES_SHORT)) {
 			throw new DisabledAccountException();
 		}
-		// 密码不相等
-		if (!Objects.equals(new String(token.getPassword()), user.getPassword())) {
+		
+		// 密码判断
+		String pwd = passwordHash.toHex(String.valueOf(token.getPassword()), user.getSalt());
+		if (!Objects.equals(pwd, user.getPassword())) {
 			throw new IncorrectCredentialsException();
 		}
 

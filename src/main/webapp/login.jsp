@@ -22,10 +22,11 @@
 		</div>
 	</div>
 	<%-- <jsp:directive.include file="WEB-INF/jsp/common/bottom.jsp" /> --%>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-easyui/jquery.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-easyui/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
-	<script type="text/javascript">
+	<script src="<%=request.getContextPath() %>/js/jquery-easyui/jquery.min.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery-easyui/jquery.easyui.min.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script src="<%=request.getContextPath() %>/js/sha256.min.js"></script>
+	<script>
 		var _contextPath;
 		$(function() {
 			// 把java的值和js的值关联起来了
@@ -53,14 +54,11 @@
 				$.messager.alert('提示消息', '密码不能为空', 'info');
 				return false;
 			}
-			//给密码加密
-			/* var password = b64_md5($('#password').val()); */
-			var password = $('#password').val(); 
 			//发送请求
 			$.ajax({
 				type: "POST",
 				url: _contextPath + "/login",
-				data: {"username":username,"password":password},
+				data: {"username":username,"password":sha256(password)},
 				success: function(data) {
 					if ( data != null && data.code == 0){
 						 window.location.href = _contextPath + '/index';

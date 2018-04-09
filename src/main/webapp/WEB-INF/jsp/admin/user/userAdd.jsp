@@ -57,6 +57,7 @@
 		</div>
 	</form>
 </div>
+<script src="${path}/js/sha256.min.js"></script>
 <script type="text/javascript">
 	$(function() {
 		// 绑定提交
@@ -70,6 +71,8 @@
 			if (!formdata) {
 				return false;
 			}
+			// 密码加密-为了在网络上传输的时候相对安全，不至于是明文
+			formdata.password = sha256(formdata.password);
 			// 发送请求处理
 			$.ajax({
 				type: 'POST',

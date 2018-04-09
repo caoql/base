@@ -1,5 +1,8 @@
 package com.cal.base.system.controller;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,6 +61,18 @@ public class LoginController extends BaseController {
 		logger.debug("get 访问 index...");
 		return "index";
 	}
+	
+	/**
+	 * 跳转到登录页
+	 * @return
+	 * @throws IOException 
+	 * @throws ServletException 
+	 */
+	@GetMapping("/login")
+	public void doLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("get 访问 /login...");
+		request.getRequestDispatcher("/login.jsp").forward(request, response);
+	}
 
 	@PostMapping("/login")
 	@ResponseBody
@@ -81,15 +96,15 @@ public class LoginController extends BaseController {
 			// 异常错误的继承体系
 			// 对于页面的错误消息展示，最好使用如“用户名/密码错误”而不是“用户名错误”/“密码错误”，防止一些恶意用户非法扫描帐号库；
 		} catch (UnknownAccountException e) {
-			throw new RuntimeException("账号不存在", e);
+			throw new CommonException("账号不存在");
 		} catch (DisabledAccountException e) {
-			throw new RuntimeException("账号未启用", e);
+			throw new CommonException("账号未启用");
 		} catch (IncorrectCredentialsException e) {
-			throw new RuntimeException("用户名或者密码错误", e);
+			throw new CommonException("用户名或者密码错误");
 		} catch (UnknownSessionException e) {
-			throw new RuntimeException("会话失效，请重新登录", e);
+			throw new CommonException("会话失效，请重新登录");
 		} catch (Throwable e) {
-			throw new RuntimeException(e.getMessage(), e);
+			throw new CommonException(e.getMessage());
 		}
 		if (userPO != null) {
 			CurrentUserInfo userInfo = new CurrentUserInfo();
