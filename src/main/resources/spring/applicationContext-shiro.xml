@@ -28,13 +28,13 @@
 				/favicon.ico =anon
 				/login.jsp = anon
 				/login = anon
-				/** = authc
+				/** = user
 			</value>
 		</property>
 		<!-- 过滤器 -->
 		<property name="filters">
 			<map>
-				<entry key="authc" value-ref="authFilter" />
+				<entry key="user" value-ref="authFilter" />
 			</map>
 		</property>
 	</bean>

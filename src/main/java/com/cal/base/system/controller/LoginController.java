@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -103,7 +104,10 @@ public class LoginController extends BaseController {
 			throw new CommonException("用户名或者密码错误");
 		} catch (UnknownSessionException e) {
 			throw new CommonException("会话失效，请重新登录");
-		} catch (Throwable e) {
+		} catch (AuthenticationException e) {  
+            //其他错误，比如锁定，如果想单独处理请单独catch处理  
+			throw new CommonException("登录验证失败"); 
+        }  catch (Throwable e) {
 			throw new CommonException(e.getMessage());
 		}
 		if (userPO != null) {

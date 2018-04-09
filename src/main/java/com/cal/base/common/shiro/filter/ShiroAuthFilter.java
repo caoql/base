@@ -24,7 +24,7 @@ import com.cal.base.common.util.web.WebUtil;
 
 /**
  * shiro 过滤器
- * 
+ * Shiro的ProxiedFilterChain执行流程：1、先执行Shiro自己的Filter链；2、再执行Servlet容器的Filter链（即原始的Filter）。
  * @author andyc 2018-4-3
  *
  */
@@ -42,7 +42,7 @@ public class ShiroAuthFilter extends AuthenticationFilter {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * 
+	 * 表示是否允许访问；mappedValue就是[urls]配置中拦截器参数部分，如果允许访问返回true，否则false；
 	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request,
@@ -62,6 +62,9 @@ public class ShiroAuthFilter extends AuthenticationFilter {
 		return super.isAccessAllowed(request, response, mappedValue);
 	}
 
+	/**
+	 * 表示当访问拒绝时是否已经处理了；如果返回true表示需要继续处理；如果返回false表示该拦截器实例已经处理了，将直接返回即可。
+	 */
 	@Override
 	protected boolean onAccessDenied(ServletRequest request,
 			ServletResponse response) throws Exception {
