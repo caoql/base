@@ -31,6 +31,8 @@ import com.cal.base.common.enums.ErrorCodeEnum;
 import com.cal.base.common.exception.CommonException;
 import com.cal.base.common.info.CurrentUserInfo;
 import com.cal.base.common.info.ResponseInfo;
+import com.cal.base.common.mail.MailService;
+import com.cal.base.common.mail.MyMailSenderTest;
 import com.cal.base.common.util.web.WebUtil;
 import com.cal.base.system.entity.LoginParam;
 import com.cal.base.system.entity.po.UserPO;
@@ -50,6 +52,10 @@ public class LoginController extends BaseController {
 	// 注入角色Service
 	@Autowired
 	private RoleService roleService;
+	
+	// 注入邮件Service
+	@Autowired
+	private MailService mailService;
 
 	/**
 	 * 访问首页
@@ -117,6 +123,11 @@ public class LoginController extends BaseController {
 			RedisClient.set(
 					SystemConstant.getSessionKey(WebUtil.getSessionId()),
 					userInfo);
+			/*//发送邮件是一件非常耗时的事情，因此这里开辟了另一个线程来专门发送邮件
+			MyMailSenderTest send = new MyMailSenderTest();
+	        //启动线程，线程启动之后就会执行run方法来发送邮件
+	        send.start();*/
+			mailService.send("系统登录成功了");
 			return renderSuccess();
 		} else {
 			return renderError("用户信息为空");

@@ -13,17 +13,11 @@
 <head>
 <meta charset="UTF-8">
 <!-- 3秒钟后自动跳转回首页 -->
-<meta http-equiv="refresh"
-	content="3;url=<%=path %>/login.jsp">
+<%-- <meta http-equiv="refresh" content="3;url=<%=path %>/login.jsp"> --%>
 <title>Insert title here</title>
 </head>
 <body>
 	<div><img src="<%=path %>/img/404.png"/></div>
 	<b>您访问的地址不存在！！！</b>
-	<br /> 3秒钟后自动跳转回首页，如果没有跳转，请点击
-	<a href="${pageContext.request.contextPath}/login.jsp">这里</a>
-	<%-- <%
-	int i = 1/0;
-	%> --%>
 </body>
 </html>

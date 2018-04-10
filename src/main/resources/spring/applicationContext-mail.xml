@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	<!-- 邮件配置信息 -->
+	<context:property-placeholder location="classpath:javamail.properties"
+		ignore-unresolvable="true" />
+
+	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host">
+			<value>${mail.smtp.host}</value>
+		</property>
+		<property name="port">
+			<value>${mail.smtp.port}</value>
+		</property>
+		<property name="username">
+			<value>${mail.smtp.username}</value> <!-- 邮箱的用户名，注意要写正确了 -->
+		</property>
+		<property name="password">
+			<value>${mail.smtp.password}</value> <!-- 邮箱密码 -->
+		</property>
+		<property name="defaultEncoding">
+			<value>UTF-8</value> 
+		</property>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.socketFactory.fallback">false</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<!-- 这里是配置ssl 主要是个-->
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 邮件操作对外暴露Bean -->
+	<bean id="mailSender" class="com.cal.base.common.mail.MailSender"
+		p:defaultFrom="${mail.default.from}" p:defaultTo="${mail.default.to}"
+		p:defaultSubject="${mail.default.subject}" />
+
+	<!-- 邮件服务对外暴露Bean -->
+	<bean id="mailService" class="com.cal.base.common.mail.MailService" />
+</beans>
